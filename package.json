@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "rm -rf .next && next dev",
+    "postinstall": "prisma generate",
     "build": "next build ",
     "start": "next start"
   },
