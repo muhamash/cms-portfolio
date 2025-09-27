@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { prisma } from "@/lib/prisma";
 
 export default async function Home ()
 {
