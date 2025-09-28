@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { getPrisma } from '@/lib/prisma';
 import { mainSeedAdmin } from '@/lib/prismaSeed';
 import NavBar from '@/modules/layouts/NavBar';
 
@@ -9,7 +9,7 @@ export default async function PagesLayout(
   children: React.ReactNode;
 }> )
 {
-  
+  const prisma = getPrisma();
   await mainSeedAdmin()
     .catch( ( e ) => console.error( e ) )
     .finally( async () =>

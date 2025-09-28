@@ -1,9 +1,10 @@
 import bcrypt from 'bcryptjs';
-import { prisma } from "./prisma";
+import { getPrisma } from './prisma';
 
 async function createUser ( email: string, name: string | null, password: string )
 {
-    
+    const prisma = getPrisma();
+
     const findUser = await prisma.user.findUnique( {
         where: {
             email: email
