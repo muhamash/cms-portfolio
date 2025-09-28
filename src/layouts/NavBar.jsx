@@ -20,7 +20,7 @@ import { useState } from 'react';
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/about', label: 'About', icon: User },
-  { href: '/blog', label: 'Blog', icon: BookOpen },
+  { href: '/blogs', label: 'Blogs', icon: BookOpen },
   { href: '/projects', label: 'Projects', icon: FolderOpen },
   { href: '/resume-builder', label: 'Resume', icon: FileText },
 ];
