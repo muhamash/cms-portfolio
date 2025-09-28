@@ -3,12 +3,9 @@ import { prisma } from "@/lib/prisma";
 
 export default async function Home ()
 {
-  const users = await prisma.user.findUnique( {
-    where: {
-      email: "test@test.com"
-    },
+  const users = await prisma.user.findMany( {
     select: { id: true, email: true, name: true },
-  });
+  } );
 
   console.log( users );
 
