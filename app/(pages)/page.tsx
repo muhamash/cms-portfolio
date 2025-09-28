@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { getPrisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma/getPrisma";
 
 export default async function Home ()
 {
-  const prisma = getPrisma();
   const users = await prisma.user.findMany( {
     select: { id: true, email: true, name: true },
   } );

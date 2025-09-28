@@ -11,7 +11,7 @@ async function createUser ( email: string, name: string | null, password: string
         }
     } );
 
-    console.log( findUser )
+    // console.log( findUser )
 
     try {
         if ( !findUser )
@@ -38,7 +38,7 @@ async function createUser ( email: string, name: string | null, password: string
 };
 
 export async function mainSeedAdmin() {
-    const user = await createUser( "test@example.com", "Ashraful", "mypassword123" );
+    const user = await createUser( "ash@ash.com", "Ash", "ash@ash.com" );
     
   console.log("User created:", user);
 };
