@@ -14,6 +14,7 @@ import
     SidebarRail,
   } from "@/components/ui/sidebar"
 import Link from "next/link"
+import { Button } from "./ui/button"
 
 export const data = {
   versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
@@ -66,10 +67,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar {...props}>
       <SidebarHeader>
         Md Ashraful Alam
+        
       </SidebarHeader>
       <SidebarContent>
+        
         {/* We create a SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
+        <div>
+          {data.navMain.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -84,7 +88,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-        ))}
+        ) )}
+        </div>
+        
+        <div className="flex flex-col-reverse items-start justify-center px-5 gap-3 pt-10">
+          <Link className="px-4 py-2 text-sm bg-cyan-600 text-white rounded-md shadow-md" href={"/"}>Back to home</Link>
+          <Button className="text-sm bg-rose-600 text-white rounded-md shadow-md" >Log out</Button>
+        </div>
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
