@@ -2,6 +2,7 @@ import PageTransition from "@/modules/layouts/PageTransition";
 import AuthProvider from "@/providers/authProvider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from 'react-hot-toast';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -69,6 +70,7 @@ export default async function RootLayout({
         <PageTransition>
           <AuthProvider>
             {children}
+            <Toaster position="top-center"/>
           </AuthProvider>
         </PageTransition>
       </body>

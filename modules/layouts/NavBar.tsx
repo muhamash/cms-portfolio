@@ -1,11 +1,15 @@
 'use client';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BookOpen, FolderOpen, Chrome as Home, Menu, User, X } from 'lucide-react';
+import { BookOpen, FolderOpen, Chrome as Home, LogOut, LogOutIcon, Menu, PanelLeft, User, X } from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
@@ -17,10 +21,25 @@ const navItems = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const router = useRouter();
   const pathname = usePathname();
 
+  const session: any = useSession();
+  console.log( session?.data?.user )
+
+  const handleLogout = async() => {
+    console.log( "handle logout" )
+    const res: any = await signOut( {
+      callbackUrl: "/"
+    } )
+    
+    if ( res?.err )
+    {
+      toast.error("Logout Failed!")
+    }
+
+    toast.success("Successfully logged out!")
+  }
 
   return (
     <motion.nav
@@ -57,8 +76,8 @@ export default function Navbar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${ isActive
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : 'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
+                    ? 'text-blue-600 dark:text-blue-400'
+                    : 'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
                     }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -76,53 +95,41 @@ export default function Navbar() {
 
           {/* User Menu / Auth */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* {isAuth && user ? (
-              <>
-                {user.role === 'admin' && (
-                  <Link href="/dashboard">
-                    <Button variant="outline" size="sm">
-                      <PanelLeft className="w-4 h-4 mr-2" />
-                      Dashboard
-                    </Button>
-                  </Link>
-                )}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src="/placeholder-avatar.jpg" alt={user.name} />
-                        <AvatarFallback>{user.name.charAt( 0 )}</AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <DropdownMenuLabel className="font-normal">
-                      <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user.name}</p>
-                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => router.push( '/profile' )}>
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={""}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
+            {session && session?.data?.user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src="/me.jpeg" alt={session?.data?.user?.name} />
+                      <AvatarFallback>{session?.data?.user?.name?.charAt( 0 )}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{session?.data?.user?.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{session?.data?.user?.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={()=> router.push("/dashboard")}>
+                    <PanelLeft className="w-4 h-4 mr-2" />
+                    <span>Dashboard</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOutIcon className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                    
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Link href={"/login"} className="bg-gradient-to-r from-sky-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow">
                 Sign In
               </Link>
-            )} */}
-            <Link href={"/login"} className="bg-gradient-to-r from-sky-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow">
-                Sign In
-              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -165,8 +172,8 @@ export default function Navbar() {
                     key={item.href}
                     href={item.href}
                     className={`flex items-center space-x-3 px-3 py-2 rounded-md text-base font-medium transition-colors ${ isActive
-                        ? 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20'
-                        : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800'
+                      ? 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20'
+                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800'
                       }`}
                     onClick={() => setIsOpen( false )}
                   >
@@ -177,10 +184,9 @@ export default function Navbar() {
               } )}
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
-                {/* {isAuth && user ? (
+                {session && session?.data?.user ? (
                   <div className="space-y-1">
-                    {user.role === 'admin' && (
-                      <Link
+                    <Link
                         href="/dashboard"
                         className="flex items-center space-x-3 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800"
                         onClick={() => setIsOpen( false )}
@@ -188,9 +194,8 @@ export default function Navbar() {
                         <PanelLeft className="w-5 h-5" />
                         <span>Dashboard</span>
                       </Link>
-                    )}
                     <button
-                      onClick={""}
+                      onClick={handleLogout}
                       className="flex items-center space-x-3 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-red-400 dark:hover:bg-gray-800 w-full text-left"
                     >
                       <LogOut className="w-5 h-5" />
@@ -201,10 +206,7 @@ export default function Navbar() {
                   <Link href={"/login"} className="bg-gradient-to-r from-sky-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow">
                     Sign In
                   </Link>
-                )} */}
-                 <Link href={"/login"} className="bg-gradient-to-r from-sky-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow">
-                    Sign In
-                  </Link>
+                )}
               </div>
             </div>
           </motion.div>

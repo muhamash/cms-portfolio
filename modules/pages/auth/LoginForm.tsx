@@ -11,15 +11,18 @@ import
         FormMessage,
     } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { handleSignIn } from "@/lib/utils/auth";
 import { loginSchema } from "@/lib/validations/auth";
+import { errorMessages } from "@/types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { FieldValues, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 export default function LoginForm() {
     const form = useForm<FieldValues>( {
-        resolver: zodResolver(loginSchema),
+        resolver: zodResolver( loginSchema ),
         defaultValues: {
             email: "",
             password: "",
@@ -27,82 +30,83 @@ export default function LoginForm() {
     } );
 
     const [ isPending, startTransition ] = useTransition();
+    const router = useRouter();
 
-    const onSubmit = async ( values: FieldValues ) =>
+    const onSubmit = ( values: FieldValues ) =>
     {
-        try
+        startTransition( async () =>
         {
-            startTransition( async() =>
+            try
             {
-                console.log(values)
-                signIn( "credentials", {
-                    ...values,
-                    // callback for successful login
-                    callbackUrl: "/dashboard",
-                } );
-                
-            } )
-        } catch ( err: unknown )
-        {
-            console.error( err );
-        }
+                const res = await handleSignIn( values );
+                console.log(res)
+
+                if ( res?.success )
+                {
+                    toast.success( res?.message )
+                    router.push("/dashboard")
+                }
+                else
+                {
+                    const msg = errorMessages[ res.message ] || errorMessages.default;
+                    
+                    toast.error( msg )
+                }
+            }
+            catch ( err: any )
+            {
+                console.error( err );
+                toast.error( err?.message || "Unexpected error!" )
+            }
+        } );
     };
+    
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6 w-full max-w-md"
+      >
+        <h2 className="text-3xl font-bold text-center">Login</h2>
 
-    const handleSocialLogin = ( provider: "google" | "github" ) =>
-    {
-        console.log( `Login with ${ provider }` );
-    };
+        {/* Email */}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="Enter your email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-    return (
-        <Form {...form}>
-            <form
-                onSubmit={form.handleSubmit( onSubmit )}
-                className="space-y-6 w-full max-w-md"
-            >
-                <h2 className="text-3xl font-bold text-center">Login</h2>
-
-                {/* Email */}
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={( { field } ) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+        {/* Password */}
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="Enter your password"
+                  {...field}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-                {/* Password */}
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={( { field } ) => (
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <Button disabled={isPending} type="submit" className="w-full mt-2">
-                    {isPending ? "working on..." : "Login"}
-                </Button>
-            </form>
-        </Form>
-    );
+        <Button disabled={isPending} type="submit" className="w-full mt-2 cursor-pointer bg-purple-800">
+          {isPending ? "Logging in..." : "Login"}
+        </Button>
+      </form>
+    </Form>
+  );
 }

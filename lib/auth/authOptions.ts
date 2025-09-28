@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
                 if ( !isValid ) return null;
 
                 // role: user?.role
-                return { id: user.id, email: user.email };
+                return { id: user.id, email: user.email, name: user.name };
             },
         } ),
     ],
@@ -109,6 +109,8 @@ export const authOptions: NextAuthOptions = {
         {
             if ( token )
             {
+                
+
                 // role: token?.role 
                 session.user = { id: token.id, email: token.email, };
                 session.accessToken = token.accessToken as string;
@@ -132,5 +134,6 @@ export const authOptions: NextAuthOptions = {
         error: "/error",
     },
 };
+
 
 export default NextAuth( authOptions );
