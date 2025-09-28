@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 
-export default async function Home (props)
+export default async function Home ()
 {
   const users = await prisma.user.findUnique( {
     where: {

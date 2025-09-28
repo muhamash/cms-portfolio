@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function BlogsPage(props) {
+export default async function BlogsPage() {
   return (
     <div className="container mx-auto px-6 py-30">
       <h1 className="text-3xl font-bold">Blogs</h1>
