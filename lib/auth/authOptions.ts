@@ -95,7 +95,7 @@ export const authOptions: NextAuthOptions = {
 
             const { accessToken, refreshToken, accessTokenExpires } = generateTokens( decoded as any );
 
-            console.log( "rotating tokens!!!", accessToken, refreshToken, accessTokenExpires )
+            console.log( "rotating tokens!!!" )
             
             return {
                 ...token,
