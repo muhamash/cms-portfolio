@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 
-export default async function Home ()
+export default async function Home (props)
 {
   const users = await prisma.user.findUnique( {
     where: {
@@ -14,7 +14,7 @@ export default async function Home ()
   // throw new Error("test")
 
   return (
-    <div>
+    <div className="py-30">
       <p className="text-green-600">hello</p>
       <Button>Click me</Button>
     </div>
