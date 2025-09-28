@@ -6,7 +6,8 @@ export default async function Home ()
   const users = await prisma.user.findUnique( {
     where: {
       email: "test@test.com"
-    }
+    },
+    select: { id: true, email: true, name: true },
   });
 
   console.log( users );

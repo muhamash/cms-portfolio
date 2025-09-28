@@ -1,3 +1,4 @@
+import { User } from "@/types/auth.types";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -22,26 +23,31 @@ export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider( {
             name: "Credentials",
-
             credentials: {
                 email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" },
             },
-            async authorize ( credentials )
+            async authorize ( credentials, req ): Promise<User | null>
             {
-                if ( !credentials?.email && !credentials.password )
+                if ( !credentials?.email || !credentials.password )
                 {
-                    console.error( "Email and Password both is required!!" );
+                    console.error( "Email and Password are required!" );
                     return null;
                 }
 
-                
                 try
                 {
-                    console.log( credentials )
-                    return
-                }
-                catch ( err )
+                    console.log( "Credentials:", credentials );
+
+                    // Example: normally you'd fetch user from DB
+                    // const user = await prisma.user.findUnique({ where: { email: credentials.email } });
+                    // if (!user) return null;
+                    // const isValid = await compare(credentials.password, user.password);
+                    // if (!isValid) return null;
+                    // return user;
+
+                    return null; 
+                } catch ( err )
                 {
                     console.error( err );
                     return null;
@@ -52,18 +58,12 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt ( { token, user } )
         {
-            if ( user )
-            {
-                token.id = user?.id;
-            }
+            if ( user ) token.id = user.id;
             return token;
         },
         async session ( { session, token } )
         {
-            if ( session?.user )
-            {
-                session.user.id = token?.id as string;
-            }
+            if ( session.user ) session.user.id = token.id as string;
             return session;
         },
     },

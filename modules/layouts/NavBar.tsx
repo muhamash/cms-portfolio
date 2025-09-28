@@ -1,18 +1,8 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import
-  {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-  } from '@/components/ui/dropdown-menu';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BookOpen, FolderOpen, Chrome as Home, LogOut, Menu, PanelLeft, Settings, User, X } from 'lucide-react';
+import { BookOpen, FolderOpen, Chrome as Home, Menu, User, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -27,11 +17,9 @@ const navItems = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState(null);
   const router = useRouter();
   const pathname = usePathname();
-
 
 
   return (
@@ -88,7 +76,7 @@ export default function Navbar() {
 
           {/* User Menu / Auth */}
           <div className="hidden md:flex items-center space-x-4">
-            {isAuth && user ? (
+            {/* {isAuth && user ? (
               <>
                 {user.role === 'admin' && (
                   <Link href="/dashboard">
@@ -131,7 +119,10 @@ export default function Navbar() {
               <Link href={"/login"} className="bg-gradient-to-r from-sky-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow">
                 Sign In
               </Link>
-            )}
+            )} */}
+            <Link href={"/login"} className="bg-gradient-to-r from-sky-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow">
+                Sign In
+              </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -186,7 +177,7 @@ export default function Navbar() {
               } )}
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
-                {isAuth && user ? (
+                {/* {isAuth && user ? (
                   <div className="space-y-1">
                     {user.role === 'admin' && (
                       <Link
@@ -210,7 +201,10 @@ export default function Navbar() {
                   <Link href={"/login"} className="bg-gradient-to-r from-sky-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow">
                     Sign In
                   </Link>
-                )}
+                )} */}
+                 <Link href={"/login"} className="bg-gradient-to-r from-sky-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow">
+                    Sign In
+                  </Link>
               </div>
             </div>
           </motion.div>

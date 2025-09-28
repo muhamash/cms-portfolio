@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import LoginForm from '@/src/pages/auth/LoginForm';
+import LoginForm from '@/modules/pages/auth/LoginForm';
 import { LucidePanelTopClose } from 'lucide-react';
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Login | CMS portfolio",

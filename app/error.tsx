@@ -1,7 +1,7 @@
 "use client"
 
 import type { RepeatType } from "framer-motion";
-import { motion, useReducedMotion } from "framer-motion";
+import { cubicBezier, motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -16,12 +16,11 @@ export default function ErrorPage() {
 
   const floatTransition = shouldReduceMotion
     ? undefined
-    : { repeat: Infinity, duration: 18, ease: [ 0.42, 0, 0.58, 1 ], repeatType: "loop" as RepeatType };
-  
+    : { repeat: Infinity, duration: 18, ease: cubicBezier( 0.42, 0, 0.58, 1 ), repeatType: "loop" as RepeatType };
 
   const floatTransition2 = shouldReduceMotion
     ? undefined
-    : { repeat: Infinity, duration: 20, ease: [ 0.42, 0, 0.58, 1 ], repeatType: "loop" as RepeatType };
+    : { repeat: Infinity, duration: 20, ease: cubicBezier( 0.42, 0, 0.58, 1 ), repeatType: "loop" as RepeatType };
   
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white">

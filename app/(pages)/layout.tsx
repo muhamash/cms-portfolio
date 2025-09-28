@@ -1,5 +1,6 @@
+import { prisma } from '@/lib/prisma';
 import { mainSeedAdmin } from '@/lib/prismaSeed';
-import NavBar from '@/src/layouts/NavBar';
+import NavBar from '@/modules/layouts/NavBar';
 
 export default async function PagesLayout(
           {

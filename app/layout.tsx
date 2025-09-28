@@ -1,5 +1,5 @@
+import PageTransition from "@/modules/layouts/PageTransition";
 import AuthProvider from "@/providers/authProvider";
-import PageTransition from "@/src/layouts/PageTransition";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
