@@ -12,7 +12,7 @@ import
     DropdownMenuTrigger,
   } from '@/components/ui/dropdown-menu';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BookOpen, FileText, FolderOpen, Chrome as Home, LogOut, Menu, PanelLeft, Settings, User, X } from 'lucide-react';
+import { BookOpen, FolderOpen, Chrome as Home, LogOut, Menu, PanelLeft, Settings, User, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -22,7 +22,7 @@ const navItems = [
   { href: '/about', label: 'About', icon: User },
   { href: '/blogs', label: 'Blogs', icon: BookOpen },
   { href: '/projects', label: 'Projects', icon: FolderOpen },
-  { href: '/resume-builder', label: 'Resume', icon: FileText },
+
 ];
 
 export default function Navbar() {
@@ -59,7 +59,8 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => {
+            {navItems.map( ( item ) =>
+            {
               const Icon = item.icon;
               const isActive = pathname === item.href;
               
@@ -67,11 +68,10 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${
-                    isActive
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${ isActive
                       ? 'text-blue-600 dark:text-blue-400'
                       : 'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
-                  }`}
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.label}</span>
@@ -83,7 +83,7 @@ export default function Navbar() {
                   )}
                 </Link>
               );
-            })}
+            } )}
           </div>
 
           {/* User Menu / Auth */}
@@ -103,7 +103,7 @@ export default function Navbar() {
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src="/placeholder-avatar.jpg" alt={user.name} />
-                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback>{user.name.charAt( 0 )}</AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
@@ -115,7 +115,7 @@ export default function Navbar() {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => router.push('/profile')}>
+                    <DropdownMenuItem onClick={() => router.push( '/profile' )}>
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Settings</span>
                     </DropdownMenuItem>
@@ -128,9 +128,9 @@ export default function Navbar() {
                 </DropdownMenu>
               </>
             ) : (
-              <Button onClick={""} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Link href={"/login"} className="bg-gradient-to-r from-sky-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow">
                 Sign In
-              </Button>
+              </Link>
             )}
           </div>
 
@@ -139,7 +139,7 @@ export default function Navbar() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => setIsOpen( !isOpen )}
               aria-expanded="false"
             >
               <span className="sr-only">Open main menu</span>
@@ -164,7 +164,8 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
           >
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-              {navItems.map((item) => {
+              {navItems.map( ( item ) =>
+              {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
                 
@@ -172,18 +173,17 @@ export default function Navbar() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center space-x-3 px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                      isActive
+                    className={`flex items-center space-x-3 px-3 py-2 rounded-md text-base font-medium transition-colors ${ isActive
                         ? 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20'
                         : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800'
-                    }`}
-                    onClick={() => setIsOpen(false)}
+                      }`}
+                    onClick={() => setIsOpen( false )}
                   >
                     <Icon className="w-5 h-5" />
                     <span>{item.label}</span>
                   </Link>
                 );
-              })}
+              } )}
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
                 {isAuth && user ? (
@@ -192,7 +192,7 @@ export default function Navbar() {
                       <Link
                         href="/dashboard"
                         className="flex items-center space-x-3 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800"
-                        onClick={() => setIsOpen(false)}
+                        onClick={() => setIsOpen( false )}
                       >
                         <PanelLeft className="w-5 h-5" />
                         <span>Dashboard</span>
@@ -207,12 +207,9 @@ export default function Navbar() {
                     </button>
                   </div>
                 ) : (
-                  <Button 
-                    onClick={""} 
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  >
+                  <Link href={"/login"} className="bg-gradient-to-r from-sky-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow">
                     Sign In
-                  </Button>
+                  </Link>
                 )}
               </div>
             </div>
