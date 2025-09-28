@@ -9,7 +9,7 @@ declare module "next-auth" {
     user: {
       id: string;
       email: string;
-    //   role?: string;
+      name?: string;
     } & DefaultSession["user"];
     accessToken: string;
     refreshToken: string;
@@ -18,7 +18,7 @@ declare module "next-auth" {
   interface User extends DefaultUser {
     id: string;
     email: string;
-    // role?: string;
+    name?: string;
   }
 }
 
@@ -26,7 +26,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     email: string;
-    // role?: string;
+    name?: string;
     accessToken: string;
     refreshToken: string;
     accessTokenExpires: number;
@@ -52,7 +52,8 @@ export const authOptions: NextAuthOptions = {
                 if ( !isValid ) return null;
 
                 // role: user?.role
-                return { id: user.id, email: user.email, name: user.name };
+                // console.log(user)
+                return user;
             },
         } ),
     ],
@@ -67,7 +68,7 @@ export const authOptions: NextAuthOptions = {
             // Initial login --> issue fresh tokens
             if ( user )
             {
-                const { accessToken, refreshToken, accessTokenExpires } = generateTokens( user );
+                const { accessToken, refreshToken, accessTokenExpires } = generateTokens( user as any );
                 return {
                     ...token,
                     ...user,
@@ -109,10 +110,9 @@ export const authOptions: NextAuthOptions = {
         {
             if ( token )
             {
-                
 
                 // role: token?.role 
-                session.user = { id: token.id, email: token.email, };
+                session.user = { id: token.id, email: token.email, name: token.name };
                 session.accessToken = token.accessToken as string;
                 session.refreshToken = token.refreshToken as string;
                 ( session as any ).rotated = token.rotated; 

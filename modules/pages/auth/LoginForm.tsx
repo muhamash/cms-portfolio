@@ -11,8 +11,8 @@ import
         FormMessage,
     } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { handleSignIn } from "@/lib/utils/auth";
-import { loginSchema } from "@/lib/validations/auth";
+import { handleSignIn } from "@/lib/utils/auth.util";
+import { loginSchema } from "@/lib/validations/auth.validation";
 import { errorMessages } from "@/types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";

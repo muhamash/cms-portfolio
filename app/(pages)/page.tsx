@@ -1,13 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { prisma } from "@/lib/prisma/getPrisma";
 
 export default async function Home ()
 {
-  const users = await prisma.user.findMany( {
-    select: { id: true, email: true, name: true },
-  } );
+  // const users = await prisma.user.findMany( {
+  //   select: { id: true, email: true, name: true },
+  // } );
 
-  console.log( users );
+  // console.log( users );
 
   // throw new Error("test")
 
