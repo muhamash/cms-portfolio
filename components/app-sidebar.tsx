@@ -53,10 +53,6 @@ export const data = {
           title: "Manage contact page content",
           url: "manage-contact-page",
         },
-        {
-          title: "Manage footer content",
-          url: "manage-footer-content",
-        },
       ],
     },
   ],
