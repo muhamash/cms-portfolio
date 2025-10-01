@@ -24,18 +24,8 @@ export const data = {
       title: "Building Your CMS portfolio",
       items: [
         {
-          title: "Create a blog",
-          url: "create-blog",
-          isActive: true
-          
-        },
-        {
           title: "Manage blogs",
           url: "manage-blogs",
-        },
-        {
-          title: "Create a project",
-          url: "create-project",
         },
         {
           title: "Manage projects",
@@ -62,7 +52,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        Md Ashraful Alam
+        <div className="flex items-center justify-center gap-3 my-3">
+          <span className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold">
+          MD
+        </span>
+        <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Md Ashraful Alam
+        </span>
+        </div>
         
       </SidebarHeader>
       <SidebarContent>
@@ -76,8 +73,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <Link href={`/dashboard/${item.url}`}>{item.title}</Link>
+                    <SidebarMenuButton asChild>
+                      <Link className="bg-orange-100" href={`/dashboard/${item.url}`}>{item.title}</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
