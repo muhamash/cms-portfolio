@@ -1,4 +1,7 @@
-export const getAllBlogs = async () => {
+"use server"
+
+export const getAllBlogs = async () =>
+{
   const res = await fetch(`${process.env.BACKEND_URL}/v1/blogs/all-blogs`, {
     cache: "no-store",
     next: {

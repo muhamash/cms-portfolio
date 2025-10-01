@@ -28,17 +28,17 @@ export default async function BlogsPage ()
     <div className="mx-auto px-6 py-30 min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-violet-800 uppercase">Blogs</h1>
-      <p className="mt-2 text-gray-600">
-        Welcome to the blog section. Stay tuned for articles, tutorials, and insights!
-      </p>
+        <p className="mt-2 text-gray-600">
+          Welcome to the blog section. Stay tuned for articles, tutorials, and insights!
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-20"> 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-20">
         {
           allBlogsData?.data?.map( blog => (
-            <BlogCard key={blog.id} title={blog.title} content={blog.content} id={blog.id} slug={blog.slug} createdAt={blog.createdAt} updatedAt={blog.updatedAt} tags={blog.tags} image={ blog.image }/>
-          ))
-          }
+            <BlogCard key={blog.id} title={blog.title} content={blog.content} id={blog.id} slug={blog.slug} createdAt={blog.createdAt} updatedAt={blog.updatedAt} tags={blog.tags} image={blog.image} />
+          ) )
+        }
       </div>
     </div>
   );
