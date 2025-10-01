@@ -54,7 +54,7 @@ export default function BlogsSection ( { blogs }: BlogsDataProps )
 
 
                     {/* Blog Content */}
-                    <div className="flex flex-col justify-between p-4 gap-3">
+                    <div className="flex flex-col justify-between p-4 gap-3 h-full">
                         <h3 className="text-md font-semibold line-clamp-1">
                             {blog.title}
                         </h3>

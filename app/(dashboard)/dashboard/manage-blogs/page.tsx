@@ -1,24 +1,36 @@
 import { getAllBlogs } from "@/lib/utils/blogs.util";
+import Pagination from "@/modules/layouts/Pagination";
 import BlogsSection from "@/modules/pages/dashboard/blogs/BlogsSection";
 import BlogsModal from "@/modules/pages/dashboard/modals/BlogsModal";
 
-export default async function ManageBlogsPage() {
-  
-  const allBlogsData = await getAllBlogs();
-    // console.log( allBlogsData.data[0] )
+interface ManageBlogsPageProps {
+  searchParams?: {
+    [key: string]: string | string[];
+  };
+}
+
+export default async function ManageBlogsPage({ searchParams }: ManageBlogsPageProps) {
+
+  const pageParam = searchParams?.page;
+  const page = Array.isArray(pageParam) ? pageParam[0] : pageParam || "1";
+
+  const allBlogsData = await getAllBlogs(page);
 
   return (
-    <div className="mx-auto md:p-6 p-3 py-20 ">
+    <div className="mx-auto md:p-6 p-3 py-20">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Manage Blogs</h1>
-
-        <BlogsModal/>
+        <BlogsModal />
       </div>
 
       <div className="bg-white py-10">
         <p className="text-gray-500 pb-10">Manage your blog posts..</p>
-        <BlogsSection blogs={allBlogsData.data}/>
+        <BlogsSection blogs={allBlogsData.data} />
       </div>
+
+      {allBlogsData?.meta?.totalPages > 1 && (
+        <Pagination totalPages={allBlogsData?.meta?.totalPages} />
+      )}
     </div>
-  )
+  );
 }

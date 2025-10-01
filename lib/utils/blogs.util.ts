@@ -2,16 +2,22 @@
 
 import { revalidateTag } from "next/cache";
 
-export const getAllBlogs = async () =>
+export const getAllBlogs = async ( page = "1", query = "" ) =>
 {
-  const res = await fetch(`${process.env.BACKEND_URL}/v1/blogs/all-blogs`, {
+  const res = await fetch( `${ process.env.BACKEND_URL }/v1/blogs/all-blogs?page=${page}&limit=6&${query}`, {
     cache: "no-store",
     next: {
-      tags: ["BLOGS"], 
+      tags: [ "BLOGS" ],
     },
-  });
+  } );
 
   const result = await res.json();
+
+  if ( result.statusCode !== 200 )
+  {
+    return { message: result.message, success: false, data: [] }
+  }
+
   return result.data;
 };
 
