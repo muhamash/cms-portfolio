@@ -1,9 +1,14 @@
 "use client"
 
+import { Button } from "@/components/ui/button";
+import { deleteBlog } from "@/lib/utils/blogs.util";
+import DOMPurify from 'dompurify';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { BlogCardProps } from "../../blogs/BlogCard";
-import DOMPurify from 'dompurify';
+import BlogsModal from "../modals/BlogsModal";
 
 interface BlogsDataProps {
   blogs: BlogCardProps[]
@@ -11,15 +16,15 @@ interface BlogsDataProps {
 
 export default function BlogsSection ( { blogs }: BlogsDataProps )
 {
+    const [deletingIds, setDeletingIds] = useState<number[]>([]);
+
     const router = useRouter();
 
-  const handleEdit = (id: number) => {
-    console.log("Edit blog with id:", id)
-  }
+    const handleEdit = ( id: number ) =>
+    {
+        console.log( "Edit blog with id:", id )
+    };
 
-  const handleDelete = (id: number) => {
-    console.log("Delete blog with id:", id)
-  }
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -84,19 +89,28 @@ export default function BlogsSection ( { blogs }: BlogsDataProps )
 
                         {/* Actions */}
                         <div className="flex gap-2 mt-auto">
-                            <button
-                                onClick={() => handleEdit( blog.id )}
-                                className="flex-1 px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => handleDelete( blog.id )}
+                            <BlogsModal blog={blog}/>
+                            <Button
+                                onClick={async () =>
+                                {
+                                    setDeletingIds( prev => [ ...prev, blog.id ] ); 
+                                    const result = await deleteBlog( blog.id );
+
+                                    if ( !result.success )
+                                    {
+                                        toast.error( result.message );
+                                    } else
+                                    {
+                                        toast.success( result.message );
+                                    }
+
+                                    setDeletingIds( prev => prev.filter( id => id !== blog.id ) ); 
+                                }}
+                                disabled={deletingIds.includes( blog.id )}
                                 className="flex-1 px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
                             >
-                                Delete
-                            </button>
-
+                                {deletingIds.includes( blog.id ) ? "Deleting..." : "Delete"}
+                            </Button>
                         </div>
                     </div>
                 </div>

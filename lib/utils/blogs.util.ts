@@ -69,3 +69,80 @@ export const createBlog = async ( values: any ) =>
     
   }
 };
+
+
+export const deleteBlog = async ( id: number ) =>
+{
+  try 
+  {
+    const res = await fetch( `${ process.env.BACKEND_URL }/v1/blogs/delete-blog/${id}`, {
+      method: "DELETE",
+    } );
+
+    revalidateTag( "BLOGS" )
+
+    const result = await res.json();
+    console.log(result)
+
+    if ( result.statusCode !== 200 )
+    {
+      return { success: false, message: result.message || "Failed to delete a blog" }
+    }
+
+    return { success: true, message: result.message }
+
+  }
+  catch ( error )
+  {
+    console.error( error );
+    return { success: false, message: error.message || "Failed to delete a blog" }
+  }
+}
+
+export const updateBlog = async ( id: number, values: any ) =>
+{
+  try
+  {
+    const formData = new FormData();
+
+    const tagsArray = Array.isArray(values?.tags)
+      ? values.tags
+      : typeof values?.tags === "string"
+      ? values.tags.split(",").map((t: string) => t.trim())
+        : [];
+    
+    const blogData = {
+      title: values?.title,
+      content: values?.content,
+      tags: tagsArray
+    };
+
+    formData.append( "data", JSON.stringify( blogData ) );
+    formData.append( "image", values?.image );
+
+    const res = await fetch( `${ process.env.BACKEND_URL }/v1/blogs/update-blog/${id}`, {
+      method: "PATCH",
+      body: formData,
+    } );
+
+    revalidateTag( "BLOGS" )
+
+    const result = await res.json();
+    // console.log( result )
+
+    if ( result.statusCode !== 200 )
+    {
+      
+      return { success: false, message: result.message || result.error || "Failed to update a blog" }
+
+    }
+
+    return { success: true, message: result.message || result.error || "Failed to update a blog" }
+  }
+  catch ( error: any )
+  {
+    console.error( error );
+    return { success: false, message: error.message || "Failed to update a blog" }
+    
+  }
+};

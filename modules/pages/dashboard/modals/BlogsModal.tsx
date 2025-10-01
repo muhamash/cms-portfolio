@@ -8,84 +8,85 @@ import
     } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createBlog } from "@/lib/utils/blogs.util"
+import { createBlog, updateBlog } from "@/lib/utils/blogs.util"
 import ImageUploader from "@/modules/layouts/ImageUploader"
 import TextEditor from "@/modules/layouts/ReactQuillTextEditor"
-import { Plus, Save, X } from "lucide-react"
-import { useState, useTransition } from "react"
+import { Edit, Plus, Save, X } from "lucide-react"
+import { useEffect, useState, useTransition } from "react"
 import { Controller, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 
 
-export default function BlogsModal() {
-    const [ open, setOpen ] = useState( false )
-    const [ isPending, startTransition ] = useTransition();
+export default function BlogsModal({ blog }: any ) {
+    const [ open, setOpen ] = useState(false)
+    const [ isPending, startTransition ] = useTransition()
 
-    const { register, control, handleSubmit, reset, formState: { errors }  } = useForm( {
-        defaultValues: { title: "", content: "", image: "", tags: "" },
-    } );
+    const { register, control, handleSubmit, reset, formState: { errors } } = useForm({
+        defaultValues: {
+            title: "",
+            content: "",
+            image: "",
+            tags: ""
+        },
+    })
 
-    const handleFormSubmit = async ( values: any ) =>
-    {
+    // Prefill the form when editing
+    useEffect(() => {
+        if (blog) {
+            reset(blog)  
+        }
+    }, [blog, reset])
 
-        const content = values.content || "";
-        const textOnly = content.replace( /<[^>]*>/g, "" ).trim();
+    const handleFormSubmit = async (values: any) => {
+        const content = values.content || ""
+        const textOnly = content.replace(/<[^>]*>/g, "").trim()
 
-        if ( !textOnly )
-        {
-            toast.error( "Content should not be empty!!" );
-            return;
+        if (!textOnly) {
+            toast.error("Content should not be empty!!")
+            return
         }
 
-        startTransition( async () =>
-        {
-            try
-            {
-                const result = await createBlog(values)
+        startTransition(async () => {
+            try {
+                const result = blog
+                    ? await updateBlog(blog.id, values)
+                    : await createBlog(values)
 
-                console.log(result)
-
-                if ( !result.success )
-                {
-                    toast.error( result?.message || "Failed to create blog" )
-                    throw new Error( "Failed to create blog" );
+                if (!result.success) {
+                    toast.error(result?.message || "Failed to save blog")
+                    throw new Error("Failed to save blog")
                 }
 
-                toast.success( " Blog created successfully!" );
-
-                reset();
-                setOpen( false );
+                toast.success(blog ? "Blog updated successfully!" : "Blog created successfully!")
+                reset()
+                setOpen(false)
+            } catch (error: any) {
+                console.error(error)
             }
-            catch ( error: any )
-            {
-                console.error( error );
-                toast.error( error?.message || "Failed to create a blog!!!" );
-            }
-        } )
-    };
+        })
+    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button className="flex items-center gap-2 bg-green-800 text-white">
-                    <Plus className="w-4 h-4" />
-                    Add Blog
+                    {blog ? <Edit className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    {blog ? "Edit Blog" : "Add Blog"}
                 </Button>
             </DialogTrigger>
 
             <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Create New Blog Post</DialogTitle>
+                    <DialogTitle>{blog ? "Edit Blog Post" : "Create New Blog Post"}</DialogTitle>
                     <DialogDescription>
-                        Fill in the details below to create a new blog post
+                        {blog ? "Update the blog details below" : "Fill in the details below to create a new blog post"}
                     </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={handleSubmit( handleFormSubmit )} className="space-y-4 mt-4">
+                <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 mt-4">
                     <div className="space-y-2">
                         <Label htmlFor="title">Title *</Label>
-                        <Input id="title" {...register( "title", { required: "Title is required" } )} placeholder="Enter blog title" />
-                    
+                        <Input id="title" {...register("title", { required: "Title is required" })} placeholder="Enter blog title" />
                         {errors.title && <p className="text-destructive text-xs">{errors.title.message}</p>}
                     </div>
 
@@ -95,8 +96,8 @@ export default function BlogsModal() {
                             name="image"
                             control={control}
                             rules={{ required: "Image is required" }}
-                            render={( { field } ) => (
-                                <ImageUploader onUpload={( file ) => field.onChange( file ? file as File  : "" )} />
+                            render={({ field }) => (
+                                <ImageUploader onUpload={( file ) => field.onChange( file ? file as File : "" )} multiple={false} initialImage={ field.value } />
                             )}
                         />
                         {errors.image && <p className="text-destructive text-xs">{errors.image.message}</p>}
@@ -114,7 +115,7 @@ export default function BlogsModal() {
                             name="content"
                             control={control}
                             rules={{ required: "Content is required" }}
-                            render={( { field } ) => (
+                            render={({ field }) => (
                                 <TextEditor value={field.value} onChange={field.onChange} />
                             )}
                         />
@@ -122,7 +123,7 @@ export default function BlogsModal() {
                     </div>
 
                     <div className="flex justify-end gap-2 pt-16">
-                        <Button type="button" variant="outline" onClick={() => setOpen( false )}>
+                        <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                             <X className="w-4 h-4 mr-2" />
                             Cancel
                         </Button>
@@ -134,5 +135,5 @@ export default function BlogsModal() {
                 </form>
             </DialogContent>
         </Dialog>
-    );
+    )
 }
