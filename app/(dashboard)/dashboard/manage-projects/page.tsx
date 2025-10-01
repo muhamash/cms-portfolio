@@ -156,7 +156,7 @@ export default function ManageProjects() {
                 </Button>
                 <Button onClick={handleSubmit}>
                   <Save className="w-4 h-4 mr-2" />
-                  Save
+                  Save Blog
                 </Button>
               </div>
             </div>
@@ -165,7 +165,7 @@ export default function ManageProjects() {
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
-        <p className="text-gray-500">Your projects will appear here</p>
+        <p className="text-gray-500">Your project will appear here</p>
       </div>
     </div>
   )

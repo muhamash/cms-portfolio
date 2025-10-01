@@ -24,6 +24,7 @@
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dompurify": "^3.2.7",
     "framer-motion": "^12.23.22",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.544.0",
@@ -37,6 +38,7 @@
     "react-quill": "^2.0.0",
     "react-quill-new": "^3.6.0",
     "tailwind-merge": "^3.3.1",
+    "use-file-upload": "^1.0.11",
     "zod": "^4.1.11"
   },
   "devDependencies": {

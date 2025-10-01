@@ -3,6 +3,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import DOMPurify from "dompurify";
 import { motion } from 'framer-motion';
 import { ArrowRight, Calendar1Icon, Tag } from 'lucide-react';
 import Link from 'next/link';
@@ -10,6 +11,7 @@ import Link from 'next/link';
 export interface BlogCardProps
 {
     id: number;
+    index: number;
     title: string;
     content: string;
     slug: string;
@@ -19,7 +21,7 @@ export interface BlogCardProps
     updatedAt: string;
 }
 
-export default function BlogCard ( { id, slug, title, content, image, tags, createdAt, updatedAt }: BlogCardProps )
+export default function BlogCard ( { id, slug, title, content, image, tags, createdAt, updatedAt, index }: BlogCardProps )
 {
     const formatDate = ( dateString: string ) =>
     {
@@ -34,7 +36,7 @@ export default function BlogCard ( { id, slug, title, content, image, tags, crea
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 + id * 0.1 }}
+            transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
         >
             <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden h-full flex flex-col bg-slate-100">
                 <div className="relative overflow-hidden">
@@ -57,9 +59,10 @@ export default function BlogCard ( { id, slug, title, content, image, tags, crea
                         {title}
                     </h3>
                   
-                    <p className="text-muted-foreground mb-4 line-clamp-3">
-                        {content}
-                    </p>
+                    <div
+                        className="text-muted-foreground mb-4 line-clamp-3"
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize( content ) }}
+                    />
 
                     <div className="flex flex-wrap gap-1 mb-4">
                         {tags?.map( ( tag ) => (
@@ -77,7 +80,7 @@ export default function BlogCard ( { id, slug, title, content, image, tags, crea
                 </CardContent>
 
                 <CardFooter className="p-6 pt-0">
-                    <Link href={`/blogs/${id}/${ slug }`} className="w-full">
+                    <Link href={`/blogs/${ id }/${ slug }`} className="w-full">
                         <Button className="w-full group bg-cyan-900 text-white">
                             Read More
                             <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />

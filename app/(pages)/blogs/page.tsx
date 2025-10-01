@@ -35,8 +35,8 @@ export default async function BlogsPage ()
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-20">
         {
-          allBlogsData?.data?.map( blog => (
-            <BlogCard key={blog.id} title={blog.title} content={blog.content} id={blog.id} slug={blog.slug} createdAt={blog.createdAt} updatedAt={blog.updatedAt} tags={blog.tags} image={blog.image} />
+          allBlogsData?.data?.map( (blog, index) => (
+            <BlogCard key={blog.id} index={index} title={blog.title} content={blog.content} id={blog.id} slug={blog.slug} createdAt={blog.createdAt} updatedAt={blog.updatedAt} tags={blog.tags} image={blog.image} />
           ) )
         }
       </div>
