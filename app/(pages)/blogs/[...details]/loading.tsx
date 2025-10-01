@@ -36,7 +36,7 @@ export default function LoadingPage() {
             </div>
             <div>
               <h3 className="text-white text-lg font-semibold">Loading</h3>
-              <p className="text-sm text-white/60">Getting things ready, hang tight!</p>
+              <p className="text-sm text-white/60">Getting blog ready, hang tight!</p>
             </div>
           </div>
 
@@ -72,7 +72,7 @@ export default function LoadingPage() {
               </div>
             </div>
 
-            <div className="text-xs text-white/60">Preparing your personalized experience…</div>
+            <div className="text-xs text-white/60">Preparing the blog details information…</div>
           </div>
 
           {/* micro animation for bottom - floating card */}
@@ -90,7 +90,7 @@ export default function LoadingPage() {
             </div>
           </motion.div>
 
-          <div className="sr-only" aria-live="polite">Loading...</div>
+          <div className="sr-only" aria-live="polite">Loading blog details...!!</div>
         </div>
       </div>
     </div>

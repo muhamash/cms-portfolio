@@ -2,7 +2,7 @@ import { getAllBlogs } from "@/lib/utils/blogs.util";
 import BlogCard from "@/modules/pages/blogs/BlogCard";
 import type { Metadata } from "next";
 
-// have to resolve metadata og and url data
+
 export const metadata: Metadata = {
   title: "Blogs | CMS portfolio",
   description: "Explore insightful blogs, tutorials, and guides on web development and modern technologies.",
@@ -11,9 +11,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Blogs | CMS portfolio",
     description: "Explore insightful blogs and guides on web development",
-    images: ["https://example.com/og-image.png"],
     creator: "github.com/muhamash",
   },
+  // have to resolve metadata og and url data
   alternates: {
     canonical: "https://example.com/blogs",
   },

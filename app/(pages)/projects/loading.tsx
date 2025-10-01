@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 
+
 export default function LoadingPage() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900">
@@ -36,7 +37,7 @@ export default function LoadingPage() {
             </div>
             <div>
               <h3 className="text-white text-lg font-semibold">Loading</h3>
-              <p className="text-sm text-white/60">Getting Blogs ready, hang tight!</p>
+              <p className="text-sm text-white/60">Getting projects ready, hang tight!</p>
             </div>
           </div>
 
@@ -72,7 +73,7 @@ export default function LoadingPage() {
               </div>
             </div>
 
-            <div className="text-xs text-white/60">Preparing all blogs…!!!!</div>
+            <div className="text-xs text-white/60">Preparing all projects…!!!!</div>
           </div>
 
           {/* micro animation for bottom - floating card */}
@@ -90,7 +91,7 @@ export default function LoadingPage() {
             </div>
           </motion.div>
 
-          <div className="sr-only" aria-live="polite">Loading all blogs...!</div>
+          <div className="sr-only" aria-live="polite">Loading all projects...!</div>
         </div>
       </div>
     </div>
