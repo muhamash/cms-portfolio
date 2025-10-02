@@ -3,6 +3,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import DOMPurify from 'dompurify';
 import { motion } from 'framer-motion';
 import { DockIcon, ExternalLinkIcon, GithubIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -56,9 +57,12 @@ export default function ProjectCard ( { id, title, description, slug, tags, imag
                     <div className="flex items-center justify-between mb-2">
                         <h3 className="text-lg font-bold">{title}</h3>
                     </div>
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                        {description}
-                    </p>
+                    
+                    <div
+                        className="text-muted-foreground mb-4 line-clamp-3"
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize( description ) }}
+                    />
+                    
                     <div className="flex flex-wrap gap-1 mb-4">
                         {tags.slice( 0, 3 ).map( ( tech ) => (
                             <Badge key={tech} variant="outline" className="text-xs">
