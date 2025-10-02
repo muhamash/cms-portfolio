@@ -52,7 +52,7 @@ export default function ProjectCard ( { id, title, description, slug, tags, imag
                         </Button>
                     </div>
                 </div>
-                <CardContent className="p-6">
+                <CardContent className="p-6 flex-1">
                     <div className="flex items-center justify-between mb-2">
                         <h3 className="text-lg font-bold">{title}</h3>
                     </div>
