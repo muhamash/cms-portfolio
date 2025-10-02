@@ -1,6 +1,8 @@
 import { getAllProjects } from "@/lib/utils/projects.utils";
+import Pagination from "@/modules/layouts/Pagination";
 import ProjectCard from "@/modules/pages/projects/ProjectCard";
 import { Metadata } from "next";
+import { ManageProjectsPageProps } from '../../(dashboard)/dashboard/manage-projects/page';
 
 export const metadata: Metadata = {
   title: "Projects | CMS portfolio",
@@ -18,9 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function ProjectsPage ()
+export default async function ProjectsPage ({ searchParams }: ManageProjectsPageProps)
 {
-    const allProjectsData = await getAllProjects()
+    const pageParam = await searchParams;
+    const page = Array.isArray( pageParam?.page ) ? pageParam?.page[ 0 ] : pageParam?.page || "1";
+    
+    const allProjectsData = await getAllProjects(page)
     // console.log(allProjectsData)
     
     return (
@@ -33,11 +38,19 @@ export default async function ProjectsPage ()
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-20">
                 {
-                    allProjectsData?.data?.map( project => (
-                        <ProjectCard key={project.id} id={project.id} title={project.title} description={project.description} slug={project.slug} tags={project.tags} image={project.image} createdAt={project.createdAt} githubLink={project.githubLink} liveLink={project.liveLink} updatedAt={project.updatedAt} />
-                    ) )
+                    allProjectsData?.data?.length > 0 ? (
+                        allProjectsData?.data?.map( project => (
+                            <ProjectCard key={project.id} id={project.id} title={project.title} description={project.description} slug={project.slug} tags={project.tags} image={project.image} createdAt={project.createdAt} githubLink={project.githubLink} liveLink={project.liveLink} updatedAt={project.updatedAt} />
+                        ) )
+                    ) : (
+                        <p className='py-10 text-center text-3xl text-rose-700'>There is no data!!</p>
+                    )
                 }
             </div>
+
+            {allProjectsData?.meta?.totalPages > 1 && (
+                <Pagination totalPages={allProjectsData?.meta?.totalPages} />
+            )}
         </div>
     );
 }

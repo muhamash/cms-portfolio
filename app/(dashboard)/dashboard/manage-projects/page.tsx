@@ -4,7 +4,7 @@ import ProjectsModal from '@/modules/pages/dashboard/modals/ProjectsModal';
 import ProjectSection from '@/modules/pages/dashboard/projects/ProjectSection';
 import 'react-quill/dist/quill.snow.css';
 
-interface ManageProjectsPageProps {
+export interface ManageProjectsPageProps {
   searchParams?: {
     [key: string]: string | string[];
   };

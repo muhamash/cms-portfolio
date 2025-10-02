@@ -3,7 +3,7 @@ import Pagination from "@/modules/layouts/Pagination";
 import BlogsSection from "@/modules/pages/dashboard/blogs/BlogsSection";
 import BlogsModal from "@/modules/pages/dashboard/modals/BlogsModal";
 
-interface ManageBlogsPageProps {
+export interface ManageBlogsPageProps {
   searchParams?: {
     [key: string]: string | string[];
   };

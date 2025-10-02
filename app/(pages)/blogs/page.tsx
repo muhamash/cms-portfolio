@@ -1,4 +1,6 @@
+import { ManageBlogsPageProps } from "@/app/(dashboard)/dashboard/manage-blogs/page";
 import { getAllBlogs } from "@/lib/utils/blogs.util";
+import Pagination from "@/modules/layouts/Pagination";
 import BlogCard from "@/modules/pages/blogs/BlogCard";
 import type { Metadata } from "next";
 
@@ -19,9 +21,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function BlogsPage ()
+export default async function BlogsPage ({ searchParams }: ManageBlogsPageProps)
 {
-  const allBlogsData = await getAllBlogs();
+  const pageParam = await searchParams;
+  const page = Array.isArray(pageParam?.page) ? pageParam?.page[0] : pageParam?.page || "1";
+
+  const allBlogsData = await getAllBlogs(page);
   // console.log( allBlogsData.data[0] )
   
   return (
@@ -35,11 +40,19 @@ export default async function BlogsPage ()
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-20">
         {
-          allBlogsData?.data?.map( (blog, index) => (
-            <BlogCard key={blog.id} index={index} title={blog.title} content={blog.content} id={blog.id} slug={blog.slug} createdAt={blog.createdAt} updatedAt={blog.updatedAt} tags={blog.tags} image={blog.image} />
-          ) )
+          allBlogsData?.data?.length > 0 ? (
+            allBlogsData?.data?.map( ( blog, index ) => (
+              <BlogCard key={blog.id} index={index} title={blog.title} content={blog.content} id={blog.id} slug={blog.slug} createdAt={blog.createdAt} updatedAt={blog.updatedAt} tags={blog.tags} image={blog.image} />
+            ) )
+          ) : (
+            <p className='py-10 text-center text-3xl text-rose-700'>There is no data!!</p>
+          )
         }
       </div>
+
+      {allBlogsData?.meta?.totalPages > 1 && (
+        <Pagination totalPages={allBlogsData?.meta?.totalPages} />
+      )}
     </div>
   );
 }
