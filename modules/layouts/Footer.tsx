@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default async function Footer() {
   return (
-    <footer className=" text-gray-900 bg-slate-50 py-12">
+    <footer className=" text-gray-900 bg-gradient-to-br from-sky-100 via-slate-50 to-purple-100 border-t-1 border-purple-800 py-12">
       <div className="container mx-auto px-6 md:px-12">
         {/* Top Section */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -31,7 +31,6 @@ export default async function Footer() {
             <ul className="space-y-2 text-sm">
               <li><a href="https://github.com/muhamash" target="_blank" rel="noreferrer" className="hover:text-white transition">GitHub</a></li>
               <li><a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:text-white transition">LinkedIn</a></li>
-              <li><a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-white transition">Twitter</a></li>
             </ul>
           </div>
 

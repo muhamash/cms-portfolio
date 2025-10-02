@@ -11,8 +11,8 @@ interface ManageBlogsPageProps {
 
 export default async function ManageBlogsPage({ searchParams }: ManageBlogsPageProps) {
 
-  const pageParam = searchParams?.page;
-  const page = Array.isArray(pageParam) ? pageParam[0] : pageParam || "1";
+  const pageParam = await searchParams;
+  const page = Array.isArray(pageParam?.page) ? pageParam?.page[0] : pageParam?.page || "1";
 
   const allBlogsData = await getAllBlogs(page);
 
@@ -25,12 +25,19 @@ export default async function ManageBlogsPage({ searchParams }: ManageBlogsPageP
 
       <div className="bg-white py-10">
         <p className="text-gray-500 pb-10">Manage your blog posts..</p>
-        <BlogsSection blogs={allBlogsData.data} />
+        {
+          allBlogsData?.data?.length > 0 ? (
+            <BlogsSection blogs={allBlogsData?.data} />
+          ) : (
+            <p className='py-10 text-center text-3xl text-rose-700'>There is no data!!</p>
+          )
+        }
       </div>
 
       {allBlogsData?.meta?.totalPages > 1 && (
         <Pagination totalPages={allBlogsData?.meta?.totalPages} />
       )}
+
     </div>
   );
 }
