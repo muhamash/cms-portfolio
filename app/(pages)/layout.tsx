@@ -1,5 +1,6 @@
 import { getPrisma } from '@/lib/prisma/prisma';
 import { mainSeedAdmin } from '@/lib/prisma/prismaSeed';
+import Footer from '@/modules/layouts/Footer';
 import NavBar from '@/modules/layouts/NavBar';
 
 export default async function PagesLayout(
@@ -17,10 +18,11 @@ export default async function PagesLayout(
       await prisma.$disconnect();
     } );
   
-    return (
-        <>
-            <NavBar />
-            {children}
-        </>
-    );
+  return (
+    <>
+      <NavBar />
+      {children}
+      <Footer />
+    </>
+  );
 }

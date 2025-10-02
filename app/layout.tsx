@@ -65,9 +65,9 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${ geistSans.variable } ${ geistMono.variable } antialiased bg-dark `}
+        className={`${ geistSans.variable } ${ geistMono.variable } antialiased `}
       >
-        <PageTransition>
+        <PageTransition className="bg-dark flex flex-col justify-between min-h-screen w-full bg-gradient-to-br from-sky-100 via-slate-50 to-purple-100">
           <AuthProvider>
             {children}
             <Toaster position="top-center"/>

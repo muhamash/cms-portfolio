@@ -18,7 +18,7 @@ export default function ProjectDetails({ project }: { project: ProjectCardProps 
     : "";
 
   return (
-    <div className="min-h-screen flex items-start justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-100 to-white">
+    <div className="min-h-screen flex items-start justify-center">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

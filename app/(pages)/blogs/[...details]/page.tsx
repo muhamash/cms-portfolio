@@ -33,7 +33,7 @@ export default async function BlogsDetailsPage(params: any) {
   if (!blog) return notFound();
 
   return (
-    <div className="py-10">
+    <div className="pt-10">
       <BlogDetails blog={blog} />
     </div>
   );

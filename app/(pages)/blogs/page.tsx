@@ -25,7 +25,7 @@ export default async function BlogsPage ()
   // console.log( allBlogsData.data[0] )
   
   return (
-    <div className="mx-auto px-6 py-30 min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="py-30 min-h-screen  px-6 md:px-12 container mx-auto">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-violet-800 uppercase">Blogs</h1>
         <p className="mt-2 text-gray-600">

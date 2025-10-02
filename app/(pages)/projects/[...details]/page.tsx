@@ -34,7 +34,7 @@ export default async function ProjectDetailsPage ( params: any )
 
     return (
       
-        <div className='py-30'>
+        <div className='py-30 min-h-screen  px-6 md:px-12 container mx-auto'>
             <ProjectDetails project={project}/>
         </div>
     );

@@ -11,7 +11,7 @@ export default async function Home ()
   // throw new Error("test")
 
   return (
-    <div className="py-30">
+    <div className="py-30 grow-1 px-6 md:px-12 container mx-auto">
       <p className="text-green-600">hello</p>
       <Button>Click me</Button>
     </div>
