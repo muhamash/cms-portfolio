@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BookOpen, FolderOpen, Chrome as Home, LogOut, LogOutIcon, Menu, PanelLeft, User, X } from 'lucide-react';
+import { BookOpen, ContactRound, FolderOpen, Chrome as Home, LogOut, LogOutIcon, Menu, PanelLeft, User, X } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -16,8 +16,9 @@ const navItems = [
   { href: '/about', label: 'About', icon: User },
   { href: '/blogs', label: 'Blogs', icon: BookOpen },
   { href: '/projects', label: 'Projects', icon: FolderOpen },
-
-];
+  { href: "/contact", label: "Contact", icon: ContactRound }
+  
+]
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
