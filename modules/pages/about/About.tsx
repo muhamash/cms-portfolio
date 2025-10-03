@@ -52,7 +52,7 @@ const AboutSection = () => {
                 transition={{ duration: 0.6 }}
                 className="text-center mb-16"
             >
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">About Me</h2>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-teal-800 font-mono">About Me</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                     Passionate about creating innovative solutions and bringing ideas to life through code
                 </p>

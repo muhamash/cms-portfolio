@@ -1,10 +1,10 @@
 import PageTransition from "@/modules/layouts/PageTransition";
+import SmoothScrollWrapper from "@/modules/layouts/SmoothScrollWrapper";
 import AuthProvider from "@/providers/authProvider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from 'react-hot-toast';
 import "./globals.css";
-import SmoothScrollWrapper from "@/modules/layouts/SmoothScrollWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,7 +66,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${ geistSans.variable } ${ geistMono.variable } antialiased `}
+        className={`${ geistSans.variable } ${ geistMono.variable } antialiased overflow-x-hidden`}
       >
         <SmoothScrollWrapper>
           <PageTransition className="bg-dark flex flex-col justify-between min-h-screen w-full bg-gradient-to-br from-sky-100 via-slate-50 to-purple-100">

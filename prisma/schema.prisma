@@ -9,32 +9,117 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  name     String?
-  password String
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  name         String?
+  password     String
+  Blog         Blog[]
+  PersonalInfo PersonalInfo?
+  Project      Project[]
 }
 
 model Blog {
-  id        Int      @id @default(autoincrement())
-  title     String   @unique
-  content   String
-  image     String?
-  tags      String[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  slug      String?  @unique
+  id           Int      @id @default(autoincrement())
+  title        String   @unique
+  content      String
+  image        String?
+  slug         String?  @unique
+  tags         String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  authorId     Int
+  PersonalInfo User     @relation(fields: [authorId], references: [id])
 }
 
 model Project {
-  id          Int      @id @default(autoincrement())
-  title       String   @unique
-  description String
-  image       String?
-  slug        String?  @unique
-  tags        String[]
-  githubLink  String   @unique
-  liveLink    String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
+  id           Int      @id @default(autoincrement())
+  title        String   @unique
+  description  String
+  image        String?
+  slug         String?  @unique
+  tags         String[]
+  githubLink   String   @unique
+  liveLink     String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  ownerId      Int
+  PersonalInfo User     @relation(fields: [ownerId], references: [id])
+}
+
+model Education {
+  id             Int          @id @default(autoincrement())
+  degree         String
+  institute      String
+  timeLine       String
+  description    String?
+  personalInfoId Int
+  PersonalInfo   PersonalInfo @relation(fields: [personalInfoId], references: [id])
+}
+
+model HeaderSkill {
+  id         Int      @id @default(autoincrement())
+  skill      String
+  homePageId Int
+  HomePage   HomePage @relation(fields: [homePageId], references: [id])
+}
+
+model HomePage {
+  id                  Int            @id @default(autoincrement())
+  headerText          String
+  headerSubTitle      String
+  headerAboutText     String
+  headerAboutSubText  String
+  headerAboutAddress  String
+  headerAboutSubTitle String
+  HeaderSkill         HeaderSkill[]
+  HomePageStat        HomePageStat[]
+}
+
+model HomePageStat {
+  id         Int      @id @default(autoincrement())
+  label      String
+  value      String
+  homePageId Int
+  HomePage   HomePage @relation(fields: [homePageId], references: [id])
+}
+
+model PersonalInfo {
+  id             Int              @id @default(autoincrement())
+  image          String?
+  name           String
+  address        String?
+  phone          String?
+  email          String           @unique
+  title          String?
+  userId         Int              @unique
+  Education      Education[]
+  User           User             @relation(fields: [userId], references: [id])
+  Skill          Skill[]
+  SocialLink     SocialLink[]
+  WorkExperience WorkExperience[]
+}
+
+model Skill {
+  id             Int          @id @default(autoincrement())
+  name           String
+  personalInfoId Int
+  PersonalInfo   PersonalInfo @relation(fields: [personalInfoId], references: [id])
+}
+
+model SocialLink {
+  id             Int          @id @default(autoincrement())
+  platform       String
+  url            String       @unique
+  personalInfoId Int
+  PersonalInfo   PersonalInfo @relation(fields: [personalInfoId], references: [id])
+}
+
+model WorkExperience {
+  id             Int          @id @default(autoincrement())
+  position       String
+  company        String
+  description    String?
+  timeLine       String
+  personalInfoId Int
+  PersonalInfo   PersonalInfo @relation(fields: [personalInfoId], references: [id])
 }

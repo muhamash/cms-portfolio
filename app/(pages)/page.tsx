@@ -21,8 +21,8 @@ export default async function Home ()
       {/* insight about me */}
       <div className="flex flex-col items-center justify-center">
         <div className="flex flex-col items-center gap-4 mb-6">
-          <h3 className="text-2xl font-bold">Ashraful</h3>
-            <p className="text-muted-foreground">Full Stack Developer</p>
+          <h3 className="text-2xl md:text-4xl font-bold text-pink-800 font-mono">Md Ashraful Alam</h3>
+            <p className="text-orange-800 text-lg md:text-xl">Full Stack Developer</p>
         </div>
 
         <div className="space-y-4 mb-6 flex flex-col items-center justify-around">

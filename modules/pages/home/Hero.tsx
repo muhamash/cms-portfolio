@@ -181,7 +181,7 @@ export function HeroSection ()
 
                     {/* Scroll indicator */}
                     <motion.button
-                        className="mx-auto flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-300 hover:border-blue-600 transition-colors duration-300"
+                        className="mx-auto flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-300 hover:border-blue-600 transition-colors duration-300 mb-20"
                         onClick={scrollToProjects}
                         variants={itemVariants}
                         animate={{

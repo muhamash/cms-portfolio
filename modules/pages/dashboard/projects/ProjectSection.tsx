@@ -89,12 +89,13 @@ export default function ProjectSection ( { projects }: ProjectsDataProps )
                                     setDeletingIds( prev => [ ...prev, project.id ] ); 
                                     const result = await deleteProject( project.id );
 
-                                    if ( !result.success )
-                                    {
-                                        toast.error( result.message );
-                                    } else
+                                    if ( result.success )
                                     {
                                         toast.success( result.message );
+                                    }
+                                    else
+                                    {
+                                        toast.error( result.message );
                                     }
 
                                     setDeletingIds( prev => prev.filter( id => id !== project.id ) ); 

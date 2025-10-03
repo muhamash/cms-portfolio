@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidateTag } from "next/cache";
+import { getAuthToken } from "../auth/auth.helper";
 
 export const getAllBlogs = async ( page = "1", query = "" ) =>
 {
@@ -38,6 +39,12 @@ export const createBlog = async ( values: any ) =>
 {
   try
   {
+    const accessToken = await getAuthToken();
+
+    if (!accessToken) {
+      return { success: false, message: "Not authenticated" };
+    }
+
     const formData = new FormData();
 
     const blogData = {
@@ -52,6 +59,11 @@ export const createBlog = async ( values: any ) =>
     const res = await fetch( `${ process.env.BACKEND_URL }/v1/blogs/create-blog`, {
       method: "POST",
       body: formData,
+      headers: {
+        Cookie: `accessToken=${ accessToken }`,
+      },
+      
+      credentials: "include",
     } );
 
     revalidateTag( "BLOGS" )
@@ -81,8 +93,19 @@ export const deleteBlog = async ( id: number ) =>
 {
   try 
   {
+    const accessToken = await getAuthToken();
+
+    if (!accessToken) {
+      return { success: false, message: "Not authenticated" };
+    }
+
     const res = await fetch( `${ process.env.BACKEND_URL }/v1/blogs/delete-blog/${id}`, {
       method: "DELETE",
+      headers: {
+        Cookie: `accessToken=${ accessToken }`,
+      },
+      
+      credentials: "include",
     } );
 
     revalidateTag( "BLOGS" )
@@ -109,6 +132,12 @@ export const updateBlog = async ( id: number, values: any ) =>
 {
   try
   {
+    const accessToken = await getAuthToken();
+
+    if (!accessToken) {
+      return { success: false, message: "Not authenticated" };
+    }
+
     const formData = new FormData();
 
     const tagsArray = Array.isArray(values?.tags)
@@ -126,9 +155,14 @@ export const updateBlog = async ( id: number, values: any ) =>
     formData.append( "data", JSON.stringify( blogData ) );
     formData.append( "image", values?.image );
 
-    const res = await fetch( `${ process.env.BACKEND_URL }/v1/blogs/update-blog/${id}`, {
+    const res = await fetch( `${ process.env.BACKEND_URL }/v1/blogs/update-blog/${ id }`, {
       method: "PATCH",
       body: formData,
+      headers: {
+        Cookie: `accessToken=${ accessToken }`,
+      },
+      
+      credentials: "include",
     } );
 
     revalidateTag( "BLOGS" )

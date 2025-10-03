@@ -59,7 +59,7 @@ const ContactPageSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Let's Collaborate</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-orange-700 font-mono">Let's Collaborate</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Have a project or idea in mind? Drop me a message, and let's build something amazing together.
           </p>

@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidateTag } from "next/cache";
+import { getAuthToken } from "../auth/auth.helper";
 
 export const getAllProjects = async ( page = "1", query = "" ) =>
 {
@@ -32,6 +33,12 @@ export const createProject = async ( values: any ) =>
 {
   try
   {
+    const accessToken = await getAuthToken();
+    
+        if (!accessToken) {
+          return { success: false, message: "Not authenticated" };
+        }
+    
     const formData = new FormData();
 
     const projectData = {
@@ -48,6 +55,11 @@ export const createProject = async ( values: any ) =>
     const res = await fetch( `${ process.env.BACKEND_URL }/v1/projects/create-project`, {
       method: "POST",
       body: formData,
+      headers: {
+        Cookie: `accessToken=${ accessToken }`,
+      },
+      
+      credentials: "include",
     } );
 
     revalidateTag( "PROJECTS" )
@@ -77,8 +89,19 @@ export const deleteProject = async ( id: number ) =>
 {
   try 
   {
+    const accessToken = await getAuthToken();
+
+    if (!accessToken) {
+      return { success: false, message: "Not authenticated" };
+    }
+
     const res = await fetch( `${ process.env.BACKEND_URL }/v1/projects/delete-project/${id}`, {
       method: "DELETE",
+      headers: {
+        Cookie: `accessToken=${ accessToken }`,
+      },
+      
+      credentials: "include",
     } );
 
     revalidateTag( "PROJECTS" )
@@ -105,6 +128,12 @@ export const updateProject = async ( id: number, values: any ) =>
 {
   try
   {
+    const accessToken = await getAuthToken();
+
+    if (!accessToken) {
+      return { success: false, message: "Not authenticated" };
+    }
+
     const formData = new FormData();
 
     const tagsArray = Array.isArray(values?.tags)
@@ -127,6 +156,11 @@ export const updateProject = async ( id: number, values: any ) =>
     const res = await fetch( `${ process.env.BACKEND_URL }/v1/projects/update-project/${id}`, {
       method: "PATCH",
       body: formData,
+      headers: {
+        Cookie: `accessToken=${ accessToken }`,
+      },
+      
+      credentials: "include",
     } );
 
     revalidateTag( "PROJECTS" )
