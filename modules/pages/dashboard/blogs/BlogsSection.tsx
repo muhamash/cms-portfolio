@@ -37,7 +37,7 @@ export default function BlogsSection ( { blogs }: BlogsDataProps )
                         {/* Hover Overlay */}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <Link
-                                href={`http://localhost:3001/blogs/${ blog.id }/${ blog.slug }`}
+                                href={`${process.env.PRODUCTION_URL}/blogs/${ blog.id }/${ blog.slug }`}
                                 className="px-4 py-2 text-sm font-medium bg-white text-gray-900 rounded shadow hover:bg-gray-100"
                             >
                                 View
