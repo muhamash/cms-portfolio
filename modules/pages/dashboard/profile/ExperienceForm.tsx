@@ -177,8 +177,8 @@ export function ExperienceManager({
 
         {/* List experiences */}
         <div className="grid grid-cols-1 gap-3">
-          {experiences.map((exp) => (
-            <Card key={exp.id}>
+          {experiences.map((exp, index) => (
+            <Card key={exp.id ?? index}>
               <CardContent className="pt-6">
                 {editingId === exp.id ? (
                   <Form {...editForm}>
