@@ -2,7 +2,7 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { createPersonalInfo, updatePersonalInfo } from '@/lib/utils/profile.utils';
+import { createPersonalInfo, createSocialLink, deleteSocialLink, updatePersonalInfo, updateSocialLink } from '@/lib/utils/profile.utils';
 import { Education, EducationManager } from '@/modules/pages/dashboard/profile/EducationForm';
 import { Experience, ExperienceManager } from '@/modules/pages/dashboard/profile/ExperienceForm';
 import { PersonalInfoForm } from '@/modules/pages/dashboard/profile/ManageProfile';
@@ -11,19 +11,6 @@ import { SocialLinksManager } from '@/modules/pages/dashboard/profile/SocialLink
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
-// const defaultPersonalInfo = {
-//   image: '',
-//   name: 'John Doe',
-//   address: '123 Main St, City, Country',
-//   phone: '+1234567890',
-//   email: 'john.doe@example.com',
-//   title: 'Full Stack Developer'
-// };
-
-const existingSocialLinks = [
-  { id: 1, platform: 'LinkedIn', url: 'https://linkedin.com/in/johndoe' },
-  { id: 2, platform: 'GitHub', url: 'https://github.com/johndoe' }
-];
 
 const existingSkills = [
   { id: 1, name: 'React' },
@@ -87,28 +74,54 @@ export default function ProfileManagerParent({defaultPersonalInfo}: any) {
         
     };
 
+    // social links
     const onCreateSocialLink = async ( data ) =>
     {
         console.log( 'Creating social link:', data );
-        // API call: const response = await fetch('/api/social-links', { method: 'POST', body: JSON.stringify(data) });
-    
-        showSuccess( 'Social link added successfully!' );
+        
+        const result = await createSocialLink( data )
+        
+        if ( !result.success )
+        {
+            toast.error(result.message)
+        }
+        else
+        {
+            showSuccess( 'Social link added successfully!' );
+            toast.success(result.message)
+        }
     };
 
-    const onUpdateSocialLink = async ( data ) =>
+    const onUpdateSocialLink = async (  id , data) =>
     {
-        console.log( 'Updating social link:', data );
-        // API call: await fetch(`/api/social-links/${editingSocial}`, { method: 'PUT', body: JSON.stringify(data) });
-    
-        showSuccess( 'Social link updated successfully!' );
+        
+        const result = await updateSocialLink(  id, data )
+        
+        if ( !result.success )
+        {
+            toast.error(result.message)
+        }
+        else
+        {
+            showSuccess( 'Social link updated successfully!' );
+            toast.success(result.message)
+        }
     };
 
     const onDeleteSocialLink = async ( id ) =>
     {
-        console.log( 'Deleting social link:', id );
-        // API call: await fetch(`/api/social-links/${id}`, { method: 'DELETE' });
-    
-        showSuccess( 'Social link deleted successfully!' );
+        
+        const result = await deleteSocialLink(  id )
+        
+        if ( !result.success )
+        {
+            toast.error(result.message)
+        }
+        else
+        {
+            showSuccess( 'Social link deleted successfully!' );
+            toast.success(result.message)
+        }
     };
 
     const onCreateSkill = async ( data ) =>
@@ -206,7 +219,7 @@ export default function ProfileManagerParent({defaultPersonalInfo}: any) {
 
                 <TabsContent value="social">
                     <SocialLinksManager
-                        initialLinks={existingSocialLinks}
+                        initialLinks={defaultPersonalInfo.socialLinks}
                         onCreate={onCreateSocialLink}
                         onUpdate={onUpdateSocialLink}
                         onDelete={onDeleteSocialLink}

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { IPersonalInfo } from '@/lib/types/util.type';
 import { personalInfoSchema } from '@/lib/validations/form.validation';
 import ImageUploader from '@/modules/layouts/ImageUploader';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +14,7 @@ import { useTransition } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 
 interface PersonalInfoFormProps {
-  defaultValues: any;
+  defaultValues: IPersonalInfo;
   onSubmit: (data: FieldValues) => Promise<void>;
 }
 
