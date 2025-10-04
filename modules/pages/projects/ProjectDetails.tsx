@@ -2,13 +2,28 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import DOMPurify from 'dompurify';
 import { motion } from "framer-motion";
-import { ExternalLink, GithubIcon } from 'lucide-react';
+import { ArrowLeftCircleIcon, CheckCheckIcon, ExternalLink, GithubIcon, Share2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { ProjectCardProps } from "./ProjectCard";
 
-
 export default function ProjectDetails({ project }: { project: ProjectCardProps }) {
+  const [ copied, setCopied ] = useState( false );
+  const router = useRouter();
+
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+
+      setTimeout(() => setCopied(false), 5000); 
+    } catch (error) {
+      console.error("Failed to copy:", error);
+    }
+  };
+
   const dateLabel = project.createdAt
     ? new Date(project.createdAt).toLocaleDateString(undefined, {
         year: "numeric",
@@ -16,102 +31,108 @@ export default function ProjectDetails({ project }: { project: ProjectCardProps 
         day: "numeric",
       })
     : "";
+  
 
   return (
-    <div className="min-h-screen flex items-start justify-center">
+    <div className="min-h-screen w-full max-w-3xl mx-auto px-6 py-12">
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-4xl"
+        className="mb-10"
       >
-        <Card className="rounded-2xl overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="relative h-64 md:h-auto md:min-h-[420px] w-full bg-slate-100">
-              {project.image ? (
-                <img
-                  src={project.image}
-                  alt={project.title}
-                //   fill
-                //   sizes="(max-width: 1024px) 100vw, 1024px"
-                  className="object-cover"
-                />
-              ) : (
-                <div className="h-full w-full flex items-center justify-center text-slate-400">
-                  <svg className="w-20 h-20 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M3 7v10a2 2 0 0 0 2 2h14" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-              )}
+        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+          {project.title}
+        </h1>
 
-              {/* subtle overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
-            </div>
 
-            <CardContent className="p-8 flex flex-col justify-between">
-              <div>
-                <motion.h2
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.06 }}
-                  className="text-2xl sm:text-3xl font-extrabold text-slate-900"
-                >
-                  {project.title}
-                </motion.h2>
+        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 mt-3">
+          {dateLabel && <span>Published: {dateLabel}</span>}
+          {project.updatedAt && (
+            <>
+              <span className="h-4 w-px bg-slate-300" />
+              <span>
+                Updated: {new Date(project.updatedAt).toLocaleDateString()}
+              </span>
+            </>
+          )}
+          {project.tags?.map((t) => (
+            <Badge
+              key={t}
+              className="bg-slate-100 text-slate-800 capitalize rounded-md"
+            >
+              {t}
+            </Badge>
+          ))}
+        </div>
 
-                <div className="mt-3 text-sm text-slate-500 flex items-center gap-3">
-                  <span>{dateLabel}</span>
-                  <span className="h-4 w-px bg-slate-200" />
-                  <span>{project.tags?.length ?? 0} tags</span>
-                </div>
-
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.12 }}
-                  className="mt-6 text-slate-700 leading-relaxed max-w-none"
-                >
-                  {project.description}
-                </motion.p>
-
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {project.tags?.map((t) => (
-                    <Badge key={t} className="capitalize bg-white/90 text-slate-800 px-3 py-1 shadow-sm">
-                      {t}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-6 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  {project.githubLink && (
-                    <a href={project.githubLink} target="_blank" rel="noreferrer">
-                      <Button variant="outline" className="flex items-center gap-2">
-                        <GithubIcon className="w-4 h-4" />
-                        Repo
-                      </Button>
-                    </a>
-                  )}
-
-                  {project.liveLink && (
-                    <a href={project.liveLink} target="_blank" rel="noreferrer">
-                      <Button className="flex items-center gap-2">
-                        <ExternalLink className="w-4 h-4" />
-                        Live
-                      </Button>
-                    </a>
-                  )}
-                </div>
-
-                <div className="text-xs text-slate-400">
-                  <div>Updated: {project.updatedAt ? new Date(project.updatedAt).toLocaleString() : "-"}</div>
-                </div>
-              </div>
-            </CardContent>
-          </div>
-        </Card>
+        {/* Links */}
+        <div className="flex gap-3 mt-4">
+          <Button
+          variant="ghost"
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-slate-900 bg-pink-200 hover:text-white hover:bg-red-800 rounded-full"
+        >
+          <ArrowLeftCircleIcon className="h-4 w-4" /> Back
+        </Button>
+          {project.githubLink && (
+            <a href={project.githubLink} target="_blank" rel="noreferrer">
+              <Button variant="outline" className="flex items-center gap-2 rounded-full">
+                <GithubIcon className="w-4 h-4" />
+                Repository
+              </Button>
+            </a>
+          )}
+          {project.liveLink && (
+            <a href={project.liveLink} target="_blank" rel="noreferrer">
+              <Button className="flex items-center gap-2 rounded-full">
+                <ExternalLink className="w-4 h-4" />
+                Live Demo
+              </Button>
+            </a>
+          )}
+        </div>
       </motion.div>
+
+      {/* Preview Image */}
+      {project.image && (
+        <div className="mb-10">
+          <img
+            src={project.image}
+            alt={project.title}
+            className="rounded-xl border border-slate-200 shadow-md max-h-80 w-full object-cover"
+          />
+        </div>
+      )}
+
+      {/* Rich Text Description */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="prose prose-slate max-w-none"
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.description) }}
+      />
+
+      {/* Actions */}
+        <div className="mt-10 flex items-center justify-between border-t pt-6">
+          <Button
+            onClick={handleShare}
+            variant="outline"
+            className="flex items-center gap-2 bg-sky-200"
+          >
+            {copied ? <CheckCheckIcon className="h-4 w-4 text-green-500" /> : <Share2Icon className="h-4 w-4" />}
+            {copied ? "Copied!" : "Share link"}
+          </Button>
+
+          <Button
+            onClick={() => window.scrollTo( { top: 0, behavior: "smooth" } )}
+            variant="secondary"
+          >
+            Back to top
+          </Button>
+        </div>
     </div>
   );
 }
