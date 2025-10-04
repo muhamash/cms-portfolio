@@ -74,7 +74,7 @@ export const createProject = async ( values: any ) =>
 
     }
 
-    return { success: true, message: result.message || result.error || "Failed to create a project" }
+    return { success: true, message: result.message }
   }
   catch ( error: any )
   {

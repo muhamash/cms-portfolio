@@ -5,34 +5,46 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Save, Upload } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { personalInfoSchema } from '@/lib/validations/form.validation';
+import ImageUploader from '@/modules/layouts/ImageUploader';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Save } from 'lucide-react';
+import { useTransition } from 'react';
+import { FieldValues, useForm } from 'react-hook-form';
 
 interface PersonalInfoFormProps {
   defaultValues: any;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: FieldValues) => Promise<void>;
 }
 
 export function PersonalInfoForm({ defaultValues, onSubmit }: PersonalInfoFormProps) {
-  const [imagePreview, setImagePreview] = useState('');
-  const form = useForm({ defaultValues });
+  const [isPending, startTransition] = useTransition();
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-        form.setValue('image', reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const form = useForm<{ name: string; phone: string; email: string; address?: string; title?: string; image?: string | File; }>({
+    resolver: zodResolver(personalInfoSchema),
+    defaultValues,
+  });
+
+  const handleSubmitForm = ( values: { name: string; phone: string; email: string; address?: string; title?: string; image?: string | File; } ) =>
+  {
+    startTransition( async () =>
+    {
+      try
+      {
+        // console.log( "Form values:", values );
+
+        await onSubmit( values );
+      }
+      catch ( error: any )
+      {
+        throw error;
+      }
+    } );
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit( handleSubmitForm )}>
         <Card>
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
@@ -41,48 +53,41 @@ export function PersonalInfoForm({ defaultValues, onSubmit }: PersonalInfoFormPr
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+
+            {/* Image Upload Field */}
             <FormField
               control={form.control}
               name="image"
-              render={({ field }) => (
+              render={( { field } ) => (
                 <FormItem>
                   <FormLabel>Profile Image</FormLabel>
                   <FormControl>
-                    <div className="flex items-center gap-4">
-                      <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden">
-                        {imagePreview || field.value ? (
-                          <img 
-                            src={imagePreview || field.value} 
-                            alt="Profile" 
-                            className="w-full h-full object-cover" 
-                          />
-                        ) : (
-                          <Upload className="w-8 h-8 text-muted-foreground" />
-                        )}
-                      </div>
-                      <Button type="button" variant="outline" asChild>
-                        <label className="cursor-pointer">
-                          Upload Image
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            onChange={handleImageUpload} 
-                            className="hidden" 
-                          />
-                        </label>
-                      </Button>
-                    </div>
+                    <ImageUploader
+                      multiple={false}
+                      initialImage={field.value}
+                      onUpload={( file ) =>
+                      {
+                        if ( file )
+                        {
+                          field.onChange( file as File );
+                        } else
+                        {
+                          field.onChange( "" );
+                        }
+                      }}
+                    />
+
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
+            {/* Full Name */}
             <FormField
               control={form.control}
               name="name"
-              rules={{ required: 'Name is required' }}
-              render={({ field }) => (
+              render={( { field } ) => (
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
@@ -93,11 +98,11 @@ export function PersonalInfoForm({ defaultValues, onSubmit }: PersonalInfoFormPr
               )}
             />
 
+            {/* Professional Title */}
             <FormField
               control={form.control}
               name="title"
-              rules={{ required: 'Title is required' }}
-              render={({ field }) => (
+              render={( { field } ) => (
                 <FormItem>
                   <FormLabel>Professional Title</FormLabel>
                   <FormControl>
@@ -108,17 +113,11 @@ export function PersonalInfoForm({ defaultValues, onSubmit }: PersonalInfoFormPr
               )}
             />
 
+            {/* Email */}
             <FormField
               control={form.control}
               name="email"
-              rules={{ 
-                required: 'Email is required',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Invalid email address'
-                }
-              }}
-              render={({ field }) => (
+              render={( { field } ) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
@@ -129,11 +128,11 @@ export function PersonalInfoForm({ defaultValues, onSubmit }: PersonalInfoFormPr
               )}
             />
 
+            {/* Phone */}
             <FormField
               control={form.control}
               name="phone"
-              rules={{ required: 'Phone is required' }}
-              render={({ field }) => (
+              render={( { field } ) => (
                 <FormItem>
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
@@ -144,11 +143,11 @@ export function PersonalInfoForm({ defaultValues, onSubmit }: PersonalInfoFormPr
               )}
             />
 
+            {/* Address */}
             <FormField
               control={form.control}
               name="address"
-              rules={{ required: 'Address is required' }}
-              render={({ field }) => (
+              render={( { field } ) => (
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
@@ -159,10 +158,11 @@ export function PersonalInfoForm({ defaultValues, onSubmit }: PersonalInfoFormPr
               )}
             />
 
+            {/* Save Button */}
             <div className="flex justify-end">
-              <Button type="submit">
+              <Button type="submit" disabled={isPending}>
                 <Save className="w-4 h-4 mr-2" />
-                Save Personal Info
+                {isPending ? "Saving..." : "Save"}
               </Button>
             </div>
           </CardContent>

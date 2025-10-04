@@ -2,21 +2,23 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { createPersonalInfo, updatePersonalInfo } from '@/lib/utils/profile.utils';
 import { Education, EducationManager } from '@/modules/pages/dashboard/profile/EducationForm';
 import { Experience, ExperienceManager } from '@/modules/pages/dashboard/profile/ExperienceForm';
 import { PersonalInfoForm } from '@/modules/pages/dashboard/profile/ManageProfile';
 import { SkillsManager } from '@/modules/pages/dashboard/profile/SkillsManager';
 import { SocialLinksManager } from '@/modules/pages/dashboard/profile/SocialLinksManager';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
-const defaultPersonalInfo = {
-  image: '',
-  name: 'John Doe',
-  address: '123 Main St, City, Country',
-  phone: '+1234567890',
-  email: 'john.doe@example.com',
-  title: 'Full Stack Developer'
-};
+// const defaultPersonalInfo = {
+//   image: '',
+//   name: 'John Doe',
+//   address: '123 Main St, City, Country',
+//   phone: '+1234567890',
+//   email: 'john.doe@example.com',
+//   title: 'Full Stack Developer'
+// };
 
 const existingSocialLinks = [
   { id: 1, platform: 'LinkedIn', url: 'https://linkedin.com/in/johndoe' },
@@ -47,10 +49,11 @@ const defaultEducation: Education[] = [
     }
 ];
 
-export default function ProfileManagerParent() {
+export default function ProfileManagerParent({defaultPersonalInfo}: any) {
 
     const [ successMessage, setSuccessMessage ] = useState( '' );
   
+    console.log(defaultPersonalInfo)
 
     const showSuccess = ( message ) =>
     {
@@ -58,11 +61,30 @@ export default function ProfileManagerParent() {
         setTimeout( () => setSuccessMessage( '' ), 3000 );
     };
 
+    // personal info submission
     const onSubmitPersonal = async ( data ) =>
     {
-        console.log( 'Personal Info submitted:', data );
-        // API call: await fetch('/api/personal-info', { method: 'POST', body: JSON.stringify(data) });
+        // console.log( 'Personal Info submitted:', data );
+        let result
+        
+        if ( defaultPersonalInfo?.id )
+        {
+            result = await updatePersonalInfo( data, defaultPersonalInfo?.id )
+        }
+        else
+        {
+            result = await createPersonalInfo( data )
+        }
+            
+        if ( !result.success )
+        {
+            toast.error( result.message || "Failed to create personal info" )
+        }
+
+        toast.success( result.message )
         showSuccess( 'Personal information updated successfully!' );
+
+        
     };
 
     const onCreateSocialLink = async ( data ) =>

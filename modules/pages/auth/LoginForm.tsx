@@ -2,26 +2,26 @@
 
 import { Button } from "@/components/ui/button";
 import
-    {
-        Form,
-        FormControl,
-        FormField,
-        FormItem,
-        FormLabel,
-        FormMessage,
-    } from "@/components/ui/form";
+  {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+  } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { handleSignIn } from "@/lib/utils/auth.util";
-import { loginSchema } from "@/lib/validations/auth.validation";
+import { loginSchema } from "@/lib/validations/form.validation";
 import { errorMessages } from "@/types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function LoginForm() {
-    const form = useForm<FieldValues>( {
+    const form = useForm<{ email: string; password: string; }>( {
         resolver: zodResolver( loginSchema ),
         defaultValues: {
             email: "",
@@ -32,7 +32,7 @@ export default function LoginForm() {
     const [ isPending, startTransition ] = useTransition();
     const router = useRouter();
 
-    const onSubmit = ( values: FieldValues ) =>
+    const onSubmit = ( values: { email: string; password: string; } ) =>
     {
         startTransition( async () =>
         {

@@ -1,3 +1,4 @@
+import { getPersonalInfo } from '@/lib/utils/profile.utils';
 import ProfileManagerParent from '@/modules/pages/dashboard/profile/Manager';
 
 const defaultPersonalInfo = {
@@ -44,6 +45,8 @@ const defaultEducation = {
 
 export default async function ManageProfile() {
 
+  const personalInfo = await getPersonalInfo();
+  // console.log(personalInfo)
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 rounded-2xl">
@@ -55,7 +58,7 @@ export default async function ManageProfile() {
           </p>
         </div>
 
-        <ProfileManagerParent/>
+        <ProfileManagerParent defaultPersonalInfo={ personalInfo } />
       </div>
     </div>
   );

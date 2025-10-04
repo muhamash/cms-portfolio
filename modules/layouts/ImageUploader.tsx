@@ -13,7 +13,7 @@ interface ImageUploaderProps {
   label?: string
   description?: string
   showHelperText?: boolean
-  initialImage?: string; 
+  initialImage?: any; 
 }
 
 export default function ImageUploader({
