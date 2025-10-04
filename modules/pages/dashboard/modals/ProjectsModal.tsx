@@ -77,7 +77,7 @@ export default function ProjectsModal({ project }: any ) {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+            <DialogContent data-lenis-prevent className="max-w-5xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>{project ? "Edit Project" : "Add New  Project"}</DialogTitle>
                     <DialogDescription>

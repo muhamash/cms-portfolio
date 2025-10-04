@@ -67,7 +67,7 @@ export default function BlogsModal({ blog }: any ) {
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog  open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button className="flex items-center gap-2 bg-green-800 text-white">
                     {blog ? <Edit className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -75,7 +75,7 @@ export default function BlogsModal({ blog }: any ) {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+            <DialogContent data-lenis-prevent className="max-w-5xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>{blog ? "Edit Blog Post" : "Create New Blog Post"}</DialogTitle>
                     <DialogDescription>
