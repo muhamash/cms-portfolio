@@ -58,7 +58,7 @@ model Education {
 
 model HeaderSkill {
   id         Int      @id @default(autoincrement())
-  skill      String
+  skill      String   @unique
   homePageId Int
   HomePage   HomePage @relation(fields: [homePageId], references: [id])
 }
@@ -71,13 +71,15 @@ model HomePage {
   headerAboutSubText  String
   headerAboutAddress  String
   headerAboutSubTitle String
+  personalInfoId      Int            @unique
   HeaderSkill         HeaderSkill[]
+  PersonalInfo        PersonalInfo   @relation(fields: [personalInfoId], references: [id])
   HomePageStat        HomePageStat[]
 }
 
 model HomePageStat {
   id         Int      @id @default(autoincrement())
-  label      String
+  label      String   @unique
   value      String
   homePageId Int
   HomePage   HomePage @relation(fields: [homePageId], references: [id])
@@ -85,14 +87,15 @@ model HomePageStat {
 
 model PersonalInfo {
   id             Int              @id @default(autoincrement())
-  image          String?
+  image          String
   name           String
-  address        String?
-  phone          String?
+  address        String
+  phone          String
   email          String           @unique
-  title          String?
+  title          String
   userId         Int              @unique
   Education      Education[]
+  HomePage       HomePage?
   User           User             @relation(fields: [userId], references: [id])
   Skill          Skill[]
   SocialLink     SocialLink[]
@@ -101,7 +104,7 @@ model PersonalInfo {
 
 model Skill {
   id             Int          @id @default(autoincrement())
-  name           String
+  name           String       @unique
   personalInfoId Int
   PersonalInfo   PersonalInfo @relation(fields: [personalInfoId], references: [id])
 }

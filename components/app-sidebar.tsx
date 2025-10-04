@@ -32,16 +32,12 @@ export const data = {
           url: "manage-projects",
         },
         {
-          title: "Manage home page content",
-          url: "manage-home-page",
+          title: "Manage pages content",
+          url: "manage-pages",
         },
         {
-          title: "Mange about page content",
-          url: "manage-about-page",
-        },
-        {
-          title: "Manage contact page content",
-          url: "manage-contact-page",
+          title: "Mange your profile content",
+          url: "manage-profile",
         },
       ],
     },
