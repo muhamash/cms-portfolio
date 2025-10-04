@@ -124,6 +124,7 @@ export default function ProfileManagerParent({defaultPersonalInfo}: any) {
         }
     };
 
+    // skills
     const onCreateSkill = async ( data ) =>
     {
         console.log( 'Creating skill:', data );
@@ -228,7 +229,7 @@ export default function ProfileManagerParent({defaultPersonalInfo}: any) {
 
                 <TabsContent value="skills">
                     <SkillsManager
-                        initialSkills={existingSkills}
+                        initialSkills={defaultPersonalInfo.skills}
                         onCreate={onCreateSkill}
                         onUpdate={onUpdateSkill}
                         onDelete={onDeleteSkill}
