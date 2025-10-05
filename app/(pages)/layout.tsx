@@ -20,7 +20,7 @@ export default async function PagesLayout(
     } );
   
   const personalData = await getPersonalInfo()
-  // console.log(personalData)
+  console.log(personalData)
   
   return (
     <>

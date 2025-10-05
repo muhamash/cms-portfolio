@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { ArrowDown, Code2Icon, Github, Linkedin, Mail } from 'lucide-react';
+import { ArrowDown, Code2Icon } from 'lucide-react';
 import Link from 'next/link';
 
 const containerVariants = {
@@ -24,13 +24,15 @@ const itemVariants = {
   },
 };
 
-export function HeroSection ()
+export function HeroSection ({homepageData}:any)
 {
     const scrollToProjects = () =>
     {
         const projectsSection = document.getElementById( 'projects' );
         projectsSection?.scrollIntoView( { behavior: 'smooth' } );
     };
+
+    // console.log(homepageData?.personalInfo?.image)
 
     return (
         <section className="min-h-screen flex items-center justify-center relative">
@@ -55,23 +57,26 @@ export function HeroSection ()
                         variants={itemVariants}
                         whileHover={{ scale: 1.05 }}
                     >
-                        <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-r from-blue-600 to-purple-600 p-1 shadow-2xl">
-                            <div className="w-full h-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
-                                <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                    MD
-                                </span>
+                        <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-r from-blue-600 to-purple-600 p-[3px] shadow-2xl">
+                            <div className="w-full h-full rounded-full bg-white dark:bg-gray-800 overflow-hidden">
+                                <img
+                                    src={homepageData?.personalInfo?.image}
+                                    alt="headerImage"
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
                         </div>
                     </motion.div>
+
 
                     {/* Main heading */}
                     <motion.h1
                         className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6"
                         variants={itemVariants}
                     >
-                        <span className="block text-gray-900 dark:text-white">Hi, I'm</span>
+                        <span className="block text-gray-900 dark:text-white">{homepageData?.headerText}</span>
                         <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                            Md Ashraful Alam
+                            {homepageData?.headerSubTitle}
                         </span>
                     </motion.h1>
 
@@ -80,12 +85,12 @@ export function HeroSection ()
                         className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto"
                         variants={itemVariants}
                     >
-                        Full Stack Developer & UI/UX Designer crafting beautiful, functional web experiences
+                        {homepageData?.personalInfo?.title}
                     </motion.p>
 
                     {/* CTA Buttons */}
                     <motion.div
-                        className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12"
+                        className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 md:my-12 my-10"
                         variants={itemVariants}
                     >
                         <Link href="/projects">
@@ -106,35 +111,6 @@ export function HeroSection ()
                             </Button>
                         </Link>
                     </motion.div>
-
-                    {/* Social Links */}
-                    <motion.div
-                        className="flex justify-center space-x-6 mb-12"
-                        variants={itemVariants}
-                    >
-                        {[
-                            { href: 'https://github.com/johndoe', icon: Github, label: 'GitHub' },
-                            { href: 'https://linkedin.com/in/johndoe', icon: Linkedin, label: 'LinkedIn' },
-                            { href: 'mailto:john.doe@example.com', icon: Mail, label: 'Email' },
-                        ].map( ( social ) =>
-                        {
-                            const Icon = social.icon;
-                            return (
-                                <motion.a
-                                    key={social.label}
-                                    href={social.href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-12 h-12 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300"
-                                    whileHover={{ scale: 1.1, y: -2 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    aria-label={social.label}
-                                >
-                                    <Icon className="w-6 h-6" />
-                                </motion.a>
-                            );
-                        } )}
-                    </motion.div>
                   
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -142,37 +118,33 @@ export function HeroSection ()
                         transition={{ duration: 0.6, delay: 0.4 }}
                         className="flex flex-wrap items-center justify-center gap-4 max-w-7xl mx-auto pb-10"
                     >
-                        {[ 'React', 'Next.js', 'Node.js',"JavaScript",'TypeScript', "Express.js", "TailwindCss" ].map( ( skill, index ) => (
+                        {homepageData?.headerSkills?.slice( 0, 5 ).map( ( data, index ) => (
                             <motion.div
-                                key={skill}
+                                key={data?.id}
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
                                 className="flex items-center justify-center gap-2 p-4 rounded-lg bg-violet-100 border border-border/50 hover:bg-card transition-colors"
                             >
                                 <Code2Icon size={16} className="text-primary" />
-                                <span className="font-medium">{skill}</span>
+                                <span className="font-medium">{data?.skill}</span>
                             </motion.div>
                         ) )}
                     </motion.div>
 
                     {/* Quick Stats */}
                     <motion.div
-                        className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-2xl mx-auto mb-12"
+                        className="flex gap-4 items-center justify-center flex-wrap max-w-2xl mx-auto md:my-12 my-10"
                         variants={itemVariants}
                     >
-                        {[
-                            { label: 'Years Experience', value: '5+' },
-                            { label: 'Projects Completed', value: '50+' },
-                            { label: 'Happy Clients', value: '30+' },
-                        ].map( ( stat, index ) => (
+                        {homepageData?.stats?.slice( 0, 5 ).map( ( stat, index ) => (
                             <motion.div
-                                key={stat.label}
+                                key={stat.id}
                                 className="text-center"
                                 whileHover={{ scale: 1.05 }}
                             >
                                 <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                                    {stat.value}
+                                    {stat.value}+
                                 </div>
                                 <div className="text-gray-600 dark:text-gray-400">{stat.label}</div>
                             </motion.div>

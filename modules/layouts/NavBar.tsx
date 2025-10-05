@@ -26,7 +26,7 @@ export default function Navbar({name}: any) {
   const pathname = usePathname();
 
   const session: any = useSession();
-  console.log( session?.data?.user )
+  // console.log( session?.data?.user )
 
   const handleLogout = async() => {
     console.log( "handle logout" )

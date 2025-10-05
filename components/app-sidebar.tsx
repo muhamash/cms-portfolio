@@ -49,11 +49,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar {...props}>
       <SidebarHeader>
         <div className="flex items-center justify-center gap-3 my-3">
-          <span className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold">
-          MD
-        </span>
         <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Md Ashraful Alam
+             CMS Portfolio
         </span>
         </div>
         

@@ -18,19 +18,19 @@ export default async function Home ()
 
   return (
     <div className="py-30 grow-1 px-6 md:px-12 container mx-auto">
-      <HeroSection />
+      <HeroSection homepageData={homePage} />
       
       {/* insight about me */}
       <div className="flex flex-col items-center justify-center">
         <div className="flex flex-col items-center gap-4 mb-6">
-          <h3 className="text-2xl md:text-4xl font-bold text-pink-800 font-mono">Md Ashraful Alam</h3>
-            <p className="text-orange-800 text-lg md:text-xl">Full Stack Developer</p>
+          <h3 className="text-2xl md:text-4xl font-bold text-pink-800 font-mono">{homePage?.personalInfo?.name}</h3>
+            <p className="text-orange-800 text-lg md:text-xl">{homePage?.personalInfo?.title}</p>
         </div>
 
         <div className="space-y-4 mb-6 flex flex-col items-center justify-around">
           <div className="flex items-center gap-3 text-sm">
             <MapPinCheck size={16} className="text-primary" />
-            <span>Mohamamdpur, Dhaka, Bangladesh</span>
+            <span>{homePage?.personalInfo.address}</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
             <Calendar1Icon size={16} className="text-primary" />
@@ -39,10 +39,7 @@ export default async function Home ()
         </div>
 
         <p className="text-muted-foreground leading-relaxed text-center">
-          I'm a passionate full-stack developer with 4+ years of experience building
-          modern web applications. I love creating efficient, scalable solutions and
-          staying up-to-date with the latest technologies. When I'm not coding, you
-          can find me exploring new frameworks or contributing to open-source projects.
+          {homePage?.headerAboutAddress}
         </p>
       </div>
 
@@ -61,7 +58,7 @@ export default async function Home ()
       </Suspense>
       
       {/* contact section */}
-      <ContactSection/>
+      <ContactSection data={ homePage?.personalInfo } />
     </div>
   );
 }

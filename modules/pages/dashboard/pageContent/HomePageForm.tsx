@@ -132,21 +132,6 @@ export function HomePageForm({ defaultValues, onSubmit }: HomePageFormProps) {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="headerAboutAddress"
-              rules={{ required: 'Address is required' }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="123 Main St, City, Country" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <div className="flex justify-end">
               <Button disabled={isPending} type="submit">
                 <Save className="w-4 h-4 mr-2" />

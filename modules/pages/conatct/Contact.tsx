@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
-const ContactPageSection = () => {
+const ContactPageSection = ({data}: any) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,10 +43,21 @@ const ContactPageSection = () => {
     }
   };
 
+  console.log(data)
+
   const contactInfo = [
-    { icon: Mail, label: 'Email', value: 'john.doe@example.com', href: 'mailto:john.doe@example.com' },
-    { icon: Phone, label: 'Phone', value: '+1 (555) 123-4567', href: 'tel:+15551234567' },
-    { icon: MapPin, label: 'Location', value: 'San Francisco, CA', href: 'https://maps.google.com/?q=San+Francisco,+CA' }
+    {
+      icon: Mail, label: 'Email', value: data?.email,
+      href: `mailto:${ data?.email }`
+    },
+    {
+      icon: Phone, label: 'Phone', value: data?.phone,
+      href: `tel:${ data?.phone }`
+    },
+    {
+      icon: MapPin, label: 'Location', value: data?.address,
+      href: `https://www.google.com/maps/search/${ data?.address }`
+    }
   ];
 
   return (

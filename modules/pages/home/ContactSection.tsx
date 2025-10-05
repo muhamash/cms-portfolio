@@ -1,10 +1,10 @@
 "use client"
 
 import { motion, useInView } from 'framer-motion';
-import { CheckCircle2Icon, MailIcon, MapPinCheck, PhoneCallIcon } from 'lucide-react';
+import { MailIcon, MapPinCheck, PhoneCallIcon } from 'lucide-react';
 import { useRef } from "react";
 
-export default function ContactSection ()
+export default function ContactSection ({data}:any)
 {
     const ref = useRef(null);
     const isInView = useInView( ref, { once: true, margin: "-100px" } );
@@ -13,20 +13,20 @@ export default function ContactSection ()
         {
             icon: MailIcon,
             label: 'Email',
-            value: 'dsfdsf.dsdfdsoe@example.com',
-            href: 'mailto:jodsfhn.ddsfdsoe@example.com'
+            value: data?.email,
+            href: `mailto:${data?.email}`
         },
         {
             icon: PhoneCallIcon,
             label: 'Phone',
-            value: '+1 (555) 123-4567',
-            href: 'tel:+15551234567'
+            value: data?.phone,
+            href: `tel:${data?.phone}`
         },
         {
             icon: MapPinCheck,
             label: 'Location',
-            value: 'Sdsan Francisdsco, CA',
-            href: 'dsAdsfdsfdsfsd'
+            value: data?.address,
+            href: `https://www.google.com/maps/search/${data?.address}`
         }
     ];
     
