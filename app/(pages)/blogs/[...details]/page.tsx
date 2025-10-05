@@ -1,8 +1,10 @@
 import { getAllBlogs, getBlogById } from "@/lib/utils/blogs.util";
 import BlogDetails from "@/modules/pages/blogs/BlogDetails";
-import DOMPurify from 'dompurify';
 import { notFound } from "next/navigation";
 
+function stripHtml(html: string) {
+  return html.replace(/<[^>]*>?/gm, '');
+}
 
 export async function generateStaticParams() {
   const blogs = await getAllBlogs();
@@ -18,17 +20,20 @@ export async function generateMetadata(params: any) {
   const [id] = blogParams.details
   const blog = await getBlogById(id);
 
-  if (!blog) return {};
+  if ( !blog ) return {};
+  
+  const cleanDescription = stripHtml( blog.content ).slice( 0, 150 ) + "...";
+  
 
   return {
     title: blog.title,
-    description: DOMPurify.sanitize( blog.content ).slice( 0, 15 ) + "...",
+    description: cleanDescription,
     openGraph: {
       type: 'website',
       locale: 'en_US',
       url: `https://cms-portfolio-livid.vercel.app/projects/${ blog.id }/${ blog.slug }`,
       title: 'Md Ashraful Alam - Full Stack Developer',
-      description: DOMPurify.sanitize( blog.content ).slice( 0, 15 ) + "...",
+      description: cleanDescription,
       siteName: 'Ashraful CMS Portfolio',
       images: [
         {
@@ -42,7 +47,7 @@ export async function generateMetadata(params: any) {
     twitter: {
       card: "summary_large_image",
       title:  blog.title,
-      description: DOMPurify.sanitize( blog.content ).slice( 0, 15 ) + "...",
+      description: cleanDescription,
       images: [blog?.image],
     },
   };

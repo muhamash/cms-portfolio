@@ -1,8 +1,10 @@
 import { getAllProjects, getProjectById } from "@/lib/utils/projects.utils";
 import ProjectDetails from "@/modules/pages/projects/ProjectDetails";
 import { notFound } from "next/navigation";
-import DOMPurify from 'dompurify';
 
+function stripHtml(html: string) {
+  return html.replace(/<[^>]*>?/gm, '');
+}
 
 export async function generateStaticParams() {
   const projects = await getAllProjects();
@@ -19,15 +21,17 @@ export async function generateMetadata(params: any) {
 
   if (!project) return {};
 
+  const cleanDescription = stripHtml( project.description ).slice( 0, 150 ) + "...";
+
   return {
     title: project.title,
-    description: DOMPurify.sanitize( project.description ).slice( 0, 15 ) + "...",
+    description: cleanDescription,
     openGraph: {
       type: 'website',
       locale: 'en_US',
       url: `https://cms-portfolio-livid.vercel.app/projects/${ project.id }/${ project.slug }`,
       title: 'Md Ashraful Alam - Full Stack Developer',
-      description: DOMPurify.sanitize( project.description ).slice( 0, 15 ) + "...",
+      description: cleanDescription,
       siteName: 'Ashraful CMS Portfolio',
       images: [
         {
@@ -40,9 +44,9 @@ export async function generateMetadata(params: any) {
     },
     twitter: {
       card: "summary_large_image",
-      title:  project.title,
-      description: DOMPurify.sanitize( project.description ).slice( 0, 15 ) + "...",
-      images: [project?.image],
+      title: project.title,
+      description: cleanDescription,
+      images: [ project?.image ],
     },
   };
 }
