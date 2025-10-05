@@ -60,7 +60,7 @@ export default async function Home ()
   // console.log(homePage)
 
   return (
-    <div className="py-30 grow-1 px-6 md:px-12 container mx-auto">
+    <div className="py-30 grow-1 px-6 md:px-12 container mx-auto overflow-x-hidden">
       <HeroSection homepageData={homePage} />
       
       {/* insight about me */}
