@@ -6,12 +6,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Login | CMS portfolio",
   description: "Login to your cms website and explore insightful blogs, tutorials, and guides on web development and modern technologies.",
-  keywords: ["blogs", "web development", "next.js", "seo", "portfolio"],
+  keywords: [ "blogs", "web development", "next.js", "seo", "portfolio" ],
   twitter: {
     card: "summary_large_image",
     title: "Login | CMS portfolio",
     description: "Login to your cms website and explore explore insightful Blogs and guides on web development",
-    images: ["https://example.com/og-image.png"],
+    images: [ "https://example.com/og-image.png" ],
     creator: "github.com/muhamash",
   },
   alternates: {
