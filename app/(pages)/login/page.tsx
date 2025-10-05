@@ -11,11 +11,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Login | CMS portfolio",
     description: "Login to your cms website and explore explore insightful Blogs and guides on web development",
-    images: [ "https://example.com/og-image.png" ],
     creator: "github.com/muhamash",
-  },
-  alternates: {
-    canonical: "https://example.com/blogs",
   },
 };
 

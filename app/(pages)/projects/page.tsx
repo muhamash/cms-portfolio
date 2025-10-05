@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     creator: "github.com/muhamash",
   },
   alternates: {
-    canonical: "https://cms-portfolio-livid.vercel.app/blogs",
+    canonical: "https://cms-portfolio-livid.vercel.app/projects",
   },
 };
 

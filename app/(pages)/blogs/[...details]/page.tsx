@@ -21,7 +21,29 @@ export async function generateMetadata(params: any) {
 
   return {
     title: blog.title,
-    description: blog.content.slice(0, 150) + "...",
+    description: blog.content.slice( 0, 150 ) + "...",
+    openGraph: {
+      type: 'website',
+      locale: 'en_US',
+      url: `https://cms-portfolio-livid.vercel.app/projects/${ blog.id }/${ blog.slug }`,
+      title: 'Md Ashraful Alam - Full Stack Developer',
+      description: blog.content.slice( 0, 15 ) + "...",
+      siteName: 'Ashraful CMS Portfolio',
+      images: [
+        {
+          url: blog.image,
+          width: 1200,
+          height: 630,
+          alt: blog.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title:  blog.title,
+      description: blog.description,
+      images: [blog?.image],
+    },
   };
 }
 

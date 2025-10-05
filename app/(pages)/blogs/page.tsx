@@ -15,9 +15,8 @@ export const metadata: Metadata = {
     description: "Explore insightful blogs and guides on web development",
     creator: "github.com/muhamash",
   },
-  // have to resolve metadata og and url data
   alternates: {
-    canonical: "https://example.com/blogs",
+    canonical: "https://cms-portfolio-livid.vercel.app/blogs",
   },
 };
 
