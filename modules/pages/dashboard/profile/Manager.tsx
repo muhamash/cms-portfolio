@@ -264,7 +264,7 @@ export default function ProfileManagerParent({defaultPersonalInfo}: any) {
             )}
 
             <Tabs defaultValue="personal" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-5">
+                <TabsList className="md:grid md:w-full md:grid-cols-5 flex gap-4 flex-wrap mb-20">
                     <TabsTrigger value="personal">Personal</TabsTrigger>
                     <TabsTrigger value="social">Social</TabsTrigger>
                     <TabsTrigger value="skills">Skills</TabsTrigger>

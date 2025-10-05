@@ -9,7 +9,7 @@ export default async function ManagePages ()
   // console.log( homePageData )
   
   return (
-    <div className="min-h-screen bg-slate-50 p-6 rounded-2xl">
+    <div className="min-h-screen bg-slate-50 md:p-6 p-3 rounded-2xl">
       <div className="max-w-6xl mx-auto space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Manage HomePage content</h1>

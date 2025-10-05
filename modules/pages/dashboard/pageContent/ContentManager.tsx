@@ -12,18 +12,6 @@ import { HomePageStatsManager } from './HomePageStatsManager';
 
 
 
-const initialHeaderSkills = [
-  { id: 1, skill: 'React', homePageId: 1 },
-  { id: 2, skill: 'TypeScript', homePageId: 1 },
-  { id: 3, skill: 'Node.js', homePageId: 1 }
-];
-
-const initialHomePageStats = [
-  { id: 1, label: 'Projects Completed', value: '50+', homePageId: 1 },
-  { id: 2, label: 'Happy Clients', value: '30+', homePageId: 1 },
-  { id: 3, label: 'Years Experience', value: '5+', homePageId: 1 }
-];
-
 export default function ManageHomePage({defaultData}:any) {
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -184,7 +172,7 @@ export default function ManageHomePage({defaultData}:any) {
             )}
 
             <Tabs defaultValue="homepage" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="md:grid md:w-full md:grid-cols-3 flex gap-4 flex-wrap mb-20">
                     <TabsTrigger value="homepage">HomePage Data</TabsTrigger>
                     <TabsTrigger value="skills">Header Skills</TabsTrigger>
                     <TabsTrigger value="stats">HomePage Stats</TabsTrigger>
