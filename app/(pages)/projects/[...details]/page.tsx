@@ -1,6 +1,7 @@
 import { getAllProjects, getProjectById } from "@/lib/utils/projects.utils";
 import ProjectDetails from "@/modules/pages/projects/ProjectDetails";
 import { notFound } from "next/navigation";
+import DOMPurify from 'dompurify';
 
 
 export async function generateStaticParams() {
@@ -20,13 +21,13 @@ export async function generateMetadata(params: any) {
 
   return {
     title: project.title,
-    description: project.description.slice( 0, 15 ) + "...",
+    description: DOMPurify.sanitize( project.description ).slice( 0, 15 ) + "...",
     openGraph: {
       type: 'website',
       locale: 'en_US',
       url: `https://cms-portfolio-livid.vercel.app/projects/${ project.id }/${ project.slug }`,
       title: 'Md Ashraful Alam - Full Stack Developer',
-      description: project.description.slice( 0, 15 ) + "...",
+      description: DOMPurify.sanitize( project.description ).slice( 0, 15 ) + "...",
       siteName: 'Ashraful CMS Portfolio',
       images: [
         {
@@ -40,7 +41,7 @@ export async function generateMetadata(params: any) {
     twitter: {
       card: "summary_large_image",
       title:  project.title,
-      description: project.description,
+      description: DOMPurify.sanitize( project.description ).slice( 0, 15 ) + "...",
       images: [project?.image],
     },
   };
