@@ -9,6 +9,7 @@ import
     CardHeader,
     CardTitle,
   } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import
   {
     Form,
@@ -51,6 +52,8 @@ export function EducationManager({
   const [pendingMap, setPendingMap] = useState<{ [key: string]: boolean }>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
+  const [editIsCurrentlyStudying, setEditIsCurrentlyStudying] = useState(false);
 
   const newForm = useForm<{ degree: string; institute: string; timeLine: string; description?: string; }>({
     resolver: zodResolver(createEducationSchema),
@@ -67,9 +70,14 @@ export function EducationManager({
   const handleCreate = async (data: any) => {
     setPending('create', true);
     try {
+      // Auto-add "Present" if only start date is provided and checkbox not checked
+      if (data.timeLine && !data.timeLine.includes(' - ') && !data.timeLine.includes('Present')) {
+        data.timeLine = `${data.timeLine} - Present`;
+      }
       await onCreate(data);
       newForm.reset();
       setIsAdding(false);
+      setIsCurrentlyStudying(false);
     } finally {
       setPending('create', false);
     }
@@ -80,8 +88,13 @@ export function EducationManager({
     const key = `update-${editingId}`;
     setPending(key, true);
     try {
+      // Auto-add "Present" if only start date is provided and checkbox not checked
+      if (data.timeLine && !data.timeLine.includes(' - ') && !data.timeLine.includes('Present')) {
+        data.timeLine = `${data.timeLine} - Present`;
+      }
       await onUpdate(editingId, data);
       setEditingId(null);
+      setEditIsCurrentlyStudying(false);
     } finally {
       setPending(key, false);
     }
@@ -99,6 +112,11 @@ export function EducationManager({
 
   const startEditing = (edu: Education) => {
     setEditingId(edu.id);
+    
+    // Check if timeline ends with "Present"
+    const endsWithPresent = edu.timeLine.includes("Present");
+    setEditIsCurrentlyStudying(endsWithPresent);
+    
     editForm.reset({
       degree: edu.degree,
       institute: edu.institute,
@@ -107,16 +125,15 @@ export function EducationManager({
     });
   };
 
-  // Helper function to parse date string in YYYY-MM-DD format
+
   const parseDateFromString = (dateStr: string) => {
-    if (!dateStr) return undefined;
+    if (!dateStr || dateStr === "Present") return undefined;
     const parts = dateStr.split('-');
     if (parts.length !== 3) return undefined;
     const [year, month, day] = parts.map(Number);
     return new Date(year, month - 1, day);
   };
 
-  // Helper function to format date to YYYY-MM-DD string
   const formatDateToString = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -124,16 +141,28 @@ export function EducationManager({
     return `${year}-${month}-${day}`;
   };
 
-  const TimelineField = ({ control, name }: { control: any; name: string }) => (
+  const TimelineField = ({ 
+    control, 
+    name, 
+    isCurrentStudying, 
+    setIsCurrentStudying 
+  }: { 
+    control: any; 
+    name: string;
+    isCurrentStudying: boolean;
+    setIsCurrentStudying: (value: boolean) => void;
+  }) => (
     <FormField
       control={control}
       name={name}
       render={({ field }) => {
-        const [fromStr, toStr] = field.value?.split(" - ") || [];
-        const currentRange = fromStr
+        const timelineValue = field.value || "";
+        const [fromStr, toStr] = timelineValue.split(" - ");
+        
+        const currentRange = fromStr && fromStr !== "Present"
           ? {
               from: parseDateFromString(fromStr),
-              to: toStr ? parseDateFromString(toStr) : undefined,
+              to: toStr && toStr !== "Present" ? parseDateFromString(toStr) : undefined,
             }
           : undefined;
 
@@ -141,18 +170,56 @@ export function EducationManager({
           <FormItem>
             <FormLabel>Timeline</FormLabel>
             <FormControl>
-              <DatePickerWithRange
-                value={currentRange}
-                onChange={(range) => {
-                  if (range?.from && range?.to) {
-                    field.onChange(`${formatDateToString(range.from)} - ${formatDateToString(range.to)}`);
-                  } else if (range?.from) {
-                    field.onChange(`${formatDateToString(range.from)}`);
-                  } else {
-                    field.onChange("");
-                  }
-                }}
-              />
+              <div className="space-y-3">
+                <DatePickerWithRange
+                  value={currentRange}
+                  onChange={(range) => {
+                    if (isCurrentStudying) {
+                      if (range?.from) {
+                        field.onChange(`${formatDateToString(range.from)} - Present`);
+                      }
+                    } else {
+                      if (range?.from && range?.to) {
+                        field.onChange(`${formatDateToString(range.from)} - ${formatDateToString(range.to)}`);
+                      } else if (range?.from) {
+                        field.onChange(`${formatDateToString(range.from)}`);
+                      } else {
+                        field.onChange("");
+                      }
+                    }
+                  }}
+                  placeholder="Pick study period"
+                  // disabled={isCurrentStudying ? { after: new Date() } : undefined}
+                />
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`current-study-${name}`}
+                    checked={isCurrentStudying}
+                    onCheckedChange={(checked) => {
+                      const isChecked = checked === true;
+                      setIsCurrentStudying(isChecked);
+                      
+                      if (isChecked) {
+                        // If checked, set to "from - Present"
+                        if (currentRange?.from) {
+                          field.onChange(`${formatDateToString(currentRange.from)} - Present`);
+                        }
+                      } else {
+                        // If unchecked, remove "Present"
+                        if (currentRange?.from) {
+                          field.onChange(`${formatDateToString(currentRange.from)}`);
+                        }
+                      }
+                    }}
+                  />
+                  <label
+                    htmlFor={`current-study-${name}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  >
+                    I currently study here
+                  </label>
+                </div>
+              </div>
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -218,7 +285,12 @@ export function EducationManager({
                       </FormItem>
                     )}
                   />
-                  <TimelineField control={newForm.control} name="timeLine" />
+                  <TimelineField 
+                    control={newForm.control} 
+                    name="timeLine"
+                    isCurrentStudying={isCurrentlyStudying}
+                    setIsCurrentStudying={setIsCurrentlyStudying}
+                  />
                   <FormField
                     control={newForm.control}
                     name="description"
@@ -243,6 +315,7 @@ export function EducationManager({
                       onClick={() => {
                         setIsAdding(false);
                         newForm.reset();
+                        setIsCurrentlyStudying(false);
                       }}
                     >
                       Cancel
@@ -297,7 +370,12 @@ export function EducationManager({
                             </FormItem>
                           )}
                         />
-                        <TimelineField control={editForm.control} name="timeLine" />
+                        <TimelineField 
+                          control={editForm.control} 
+                          name="timeLine"
+                          isCurrentStudying={editIsCurrentlyStudying}
+                          setIsCurrentStudying={setEditIsCurrentlyStudying}
+                        />
                         <FormField
                           control={editForm.control}
                           name="description"
@@ -315,7 +393,10 @@ export function EducationManager({
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() => setEditingId(null)}
+                            onClick={() => {
+                              setEditingId(null);
+                              setEditIsCurrentlyStudying(false);
+                            }}
                           >
                             Cancel
                           </Button>

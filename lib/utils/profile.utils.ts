@@ -60,7 +60,7 @@ export const createPersonalInfo = async ( values: IPersonalInfo ) =>
             credentials: "include",
         } );
 
-        revalidateTag( "PERSONAL" )
+        revalidateTag( "INFO" )
 
         const result = await res.json();
         // console.log( result )
@@ -116,7 +116,7 @@ export const updatePersonalInfo = async ( values: IPersonalInfo , id: number ) =
             credentials: "include",
         } );
 
-        revalidateTag( "PERSONAL" )
+        revalidateTag( "INFO" )
 
         const result = await res.json();
         // console.log( result )
@@ -167,7 +167,7 @@ export const createSocialLink = async ( values: SocialLinkTypes ) =>
             credentials: "include",
         } );
 
-        revalidateTag( "PERSONAL" )
+        revalidateTag( "INFO" )
 
         const result = await res.json();
         // console.log( result )

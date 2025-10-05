@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,6 +39,8 @@ export function ExperienceManager({
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [pendingMap, setPendingMap] = useState<{ [key: string]: boolean }>({});
+  const [isCurrentlyWorking, setIsCurrentlyWorking] = useState(false);
+  const [editIsCurrentlyWorking, setEditIsCurrentlyWorking] = useState(false);
 
   const newForm = useForm<CreateExperienceInput>({
     resolver: zodResolver(createExperienceSchema),
@@ -54,9 +57,14 @@ export function ExperienceManager({
   const handleCreate = async (data: any) => {
     setPending('create', true);
     try {
+      // Auto-add "Present" if only start date is provided and checkbox not checked
+      if (data.timeLine && !data.timeLine.includes(' - ') && !data.timeLine.includes('Present')) {
+        data.timeLine = `${data.timeLine} - Present`;
+      }
       await onCreate(data);
       newForm.reset();
       setIsAdding(false);
+      setIsCurrentlyWorking(false);
     } finally {
       setPending('create', false);
     }
@@ -67,8 +75,13 @@ export function ExperienceManager({
     const key = `update-${editingId}`;
     setPending(key, true);
     try {
+      // Auto-add "Present" if only start date is provided and checkbox not checked
+      if (data.timeLine && !data.timeLine.includes(' - ') && !data.timeLine.includes('Present')) {
+        data.timeLine = `${data.timeLine} - Present`;
+      }
       await onUpdate(editingId, data);
       setEditingId(null);
+      setEditIsCurrentlyWorking(false);
     } finally {
       setPending(key, false);
     }
@@ -86,6 +99,11 @@ export function ExperienceManager({
 
   const startEditing = (exp: Experience) => {
     setEditingId(exp.id);
+    
+    // Check if timeline ends with "Present"
+    const endsWithPresent = exp.timeLine.includes("Present");
+    setEditIsCurrentlyWorking(endsWithPresent);
+    
     editForm.reset({
       position: exp.position,
       company: exp.company,
@@ -94,16 +112,16 @@ export function ExperienceManager({
     });
   };
 
-  // Helper function to parse date string in YYYY-MM-DD format
+
   const parseDateFromString = (dateStr: string) => {
-    if (!dateStr) return undefined;
+    if (!dateStr || dateStr === "Present") return undefined;
     const parts = dateStr.split('-');
     if (parts.length !== 3) return undefined;
     const [year, month, day] = parts.map(Number);
     return new Date(year, month - 1, day);
   };
 
-  // Helper function to format date to YYYY-MM-DD string
+
   const formatDateToString = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -111,16 +129,28 @@ export function ExperienceManager({
     return `${year}-${month}-${day}`;
   };
 
-  const TimelineField = ({ control, name }: { control: any; name: string }) => (
+  const TimelineField = ({ 
+    control, 
+    name, 
+    isCurrentWorking, 
+    setIsCurrentWorking 
+  }: { 
+    control: any; 
+    name: string;
+    isCurrentWorking: boolean;
+    setIsCurrentWorking: (value: boolean) => void;
+  }) => (
     <FormField
       control={control}
       name={name}
       render={({ field }) => {
-        const [fromStr, toStr] = field.value?.split(" - ") || [];
-        const currentRange = fromStr
+        const timelineValue = field.value || "";
+        const [fromStr, toStr] = timelineValue.split(" - ");
+        
+        const currentRange = fromStr && fromStr !== "Present"
           ? {
               from: parseDateFromString(fromStr),
-              to: toStr ? parseDateFromString(toStr) : undefined,
+              to: toStr && toStr !== "Present" ? parseDateFromString(toStr) : undefined,
             }
           : undefined;
 
@@ -128,19 +158,56 @@ export function ExperienceManager({
           <FormItem>
             <FormLabel>Timeline</FormLabel>
             <FormControl>
-              <DatePickerWithRange
-                value={currentRange}
-                onChange={(range) => {
-                  if (range?.from && range?.to) {
-                    field.onChange(`${formatDateToString(range.from)} - ${formatDateToString(range.to)}`);
-                  } else if (range?.from) {
-                    field.onChange(`${formatDateToString(range.from)}`);
-                  } else {
-                    field.onChange("");
-                  }
-                }}
-                placeholder="Pick employment period"
-              />
+              <div className="space-y-3">
+                <DatePickerWithRange
+                  value={currentRange}
+                  onChange={(range) => {
+                    if (isCurrentWorking) {
+                      if (range?.from) {
+                        field.onChange(`${formatDateToString(range.from)} - Present`);
+                      }
+                    } else {
+                      if (range?.from && range?.to) {
+                        field.onChange(`${formatDateToString(range.from)} - ${formatDateToString(range.to)}`);
+                      } else if (range?.from) {
+                        field.onChange(`${formatDateToString(range.from)}`);
+                      } else {
+                        field.onChange("");
+                      }
+                    }
+                  }}
+                  placeholder="Pick employment period"
+                  // disabled={isCurrentWorking ? { after: new Date() } : undefined}
+                />
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`current-work-${name}`}
+                    checked={isCurrentWorking}
+                    onCheckedChange={(checked) => {
+                      const isChecked = checked === true;
+                      setIsCurrentWorking(isChecked);
+                      
+                      if (isChecked) {
+                        // If checked, set to "from - Present"
+                        if (currentRange?.from) {
+                          field.onChange(`${formatDateToString(currentRange.from)} - Present`);
+                        }
+                      } else {
+                        // If unchecked, remove "Present"
+                        if (currentRange?.from) {
+                          field.onChange(`${formatDateToString(currentRange.from)}`);
+                        }
+                      }
+                    }}
+                  />
+                  <label
+                    htmlFor={`current-work-${name}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  >
+                    I currently work here
+                  </label>
+                </div>
+              </div>
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -201,7 +268,12 @@ export function ExperienceManager({
                       </FormItem>
                     )}
                   />
-                  <TimelineField control={newForm.control} name="timeLine" />
+                  <TimelineField 
+                    control={newForm.control} 
+                    name="timeLine"
+                    isCurrentWorking={isCurrentlyWorking}
+                    setIsCurrentWorking={setIsCurrentlyWorking}
+                  />
                   <FormField
                     control={newForm.control}
                     name="description"
@@ -222,6 +294,7 @@ export function ExperienceManager({
                       onClick={() => {
                         setIsAdding(false);
                         newForm.reset();
+                        setIsCurrentlyWorking(false);
                       }}
                     >
                       Cancel
@@ -273,7 +346,12 @@ export function ExperienceManager({
                             </FormItem>
                           )}
                         />
-                        <TimelineField control={editForm.control} name="timeLine" />
+                        <TimelineField 
+                          control={editForm.control} 
+                          name="timeLine"
+                          isCurrentWorking={editIsCurrentlyWorking}
+                          setIsCurrentWorking={setEditIsCurrentlyWorking}
+                        />
                         <FormField
                           control={editForm.control}
                           name="description"
@@ -287,7 +365,15 @@ export function ExperienceManager({
                           )}
                         />
                         <div className="flex justify-end gap-2">
-                          <Button type="button" variant="outline" size="sm" onClick={() => setEditingId(null)}>
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => {
+                              setEditingId(null);
+                              setEditIsCurrentlyWorking(false);
+                            }}
+                          >
                             Cancel
                           </Button>
                           <Button type="submit" size="sm" disabled={pendingMap[updateKey]}>
