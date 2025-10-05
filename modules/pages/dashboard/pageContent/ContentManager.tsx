@@ -3,20 +3,14 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { createHeaderSkill, createHeaderStats, createHomePage, deleteHeaderSkill, deleteHeaderStats, updateHeaderSkill, updateHeaderStats, updateHomePage } from '@/lib/utils/page.utils';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { HeaderSkillsManager } from './HeaderSkillsManager';
-import { HomePageStatsManager } from './HomePageStatsManager';
 import { HomePageForm } from './HomePageForm';
+import { HomePageStatsManager } from './HomePageStatsManager';
 
 
-const defaultHomePage = {
-  headerText: 'Welcome to My Portfolio',
-  headerSubTitle: 'Full Stack Developer',
-  headerAboutText: 'About Me',
-  headerAboutSubText: 'Passionate developer with 5+ years of experience',
-  headerAboutAddress: '123 Main St, City, Country',
-  headerAboutSubTitle: 'Building amazing web applications'
-};
 
 const initialHeaderSkills = [
   { id: 1, skill: 'React', homePageId: 1 },
@@ -30,57 +24,153 @@ const initialHomePageStats = [
   { id: 3, label: 'Years Experience', value: '5+', homePageId: 1 }
 ];
 
-export default function ManageHomePage() {
+export default function ManageHomePage({defaultData}:any) {
   const [successMessage, setSuccessMessage] = useState('');
 
-  const showSuccess = (message: string) => {
-    setSuccessMessage(message);
-    setTimeout(() => setSuccessMessage(''), 3000);
+  const showSuccess = ( message: string ) =>
+  {
+    setSuccessMessage( message );
+    setTimeout( () => setSuccessMessage( '' ), 3000 );
   };
 
+  console.log(defaultData)
   // HomePage Form Handlers
-  const handleHomePageSubmit = async (data: any) => {
-    console.log('HomePage submitted:', data);
-    // API call: await fetch('/api/homepage', { method: 'PUT', body: JSON.stringify(data) });
-    showSuccess('HomePage information updated successfully!');
+  const handleHomePageSubmit = async ( data: any ) =>
+  {
+    console.log( 'HomePage submitted:', data );
+    
+    let result;
+
+    if ( defaultData?.id )
+    {
+      result = await updateHomePage( data, defaultData?.id )
+    }
+    else
+    {
+      result = await createHomePage( data )
+    }
+
+    if ( result.success )
+    {
+      toast.success( result.message )
+      showSuccess( 'HomePage information updated successfully!' );
+    }
+    else
+    {
+      toast.error( result.message )
+    }
+
   };
 
   // Header Skills Handlers
-  const handleCreateSkill = async (data: { skill: string }) => {
-    console.log('Creating skill:', data);
-    // API call: await fetch('/api/header-skills', { method: 'POST', body: JSON.stringify(data) });
-    showSuccess('Skill added successfully!');
+  const handleCreateSkill = async ( data ) =>
+  {
+    console.log( 'Creating skill:', data );
+    
+    console.log( 'Creating skill:', data );
+    const result = await createHeaderSkill( data )
+    console.log( result )
+        
+    if ( result.success )
+    {
+      showSuccess( 'Skill added successfully!' );
+      toast.success( result.message )
+    }
+    else
+    {
+      toast.error( result.message )
+    }
+
   };
 
-  const handleUpdateSkill = async (id: number, data: { skill: string }) => {
-    console.log('Updating skill:', id, data);
-    // API call: await fetch(`/api/header-skills/${id}`, { method: 'PUT', body: JSON.stringify(data) });
-    showSuccess('Skill updated successfully!');
+  const handleUpdateSkill = async ( id, data ) =>
+  {
+    console.log( 'Updating skill:', id, data );
+    
+    const result = await updateHeaderSkill(id, data )
+    console.log( result )
+        
+    if ( result.success )
+    {
+      showSuccess( 'Skill updated successfully!' );
+      toast.success( result.message )
+    }
+    else
+    {
+      toast.error( result.message )
+    }
   };
 
-  const handleDeleteSkill = async (id: number) => {
-    console.log('Deleting skill:', id);
-    // API call: await fetch(`/api/header-skills/${id}`, { method: 'DELETE' });
-    showSuccess('Skill deleted successfully!');
+  const handleDeleteSkill = async ( id: number ) =>
+  {
+    console.log( 'Deleting skill:', id );
+    
+    const result = await deleteHeaderSkill( id )
+    console.log( result )
+        
+    if ( result.success )
+    {
+      showSuccess( 'Skill deleted successfully!' );
+      toast.success( result.message )
+    }
+    else
+    {
+      toast.error( result.message )
+    }
   };
 
   // HomePage Stats Handlers
-  const handleCreateStat = async (data: { label: string; value: string }) => {
-    console.log('Creating stat:', data);
-    // API call: await fetch('/api/homepage-stats', { method: 'POST', body: JSON.stringify(data) });
-    showSuccess('Statistic added successfully!');
+  const handleCreateStat = async ( data: { label: string; value: string } ) =>
+  {
+    console.log( 'Creating stat:', data );
+    const result = await createHeaderStats( data )
+    console.log( result )
+        
+    if ( result.success )
+    {
+      showSuccess( 'Stat Creating successfully!' );
+      toast.success( result.message )
+    }
+    else
+    {
+      toast.error( result.message )
+    }
   };
 
-  const handleUpdateStat = async (id: number, data: { label: string; value: string }) => {
-    console.log('Updating stat:', id, data);
-    // API call: await fetch(`/api/homepage-stats/${id}`, { method: 'PUT', body: JSON.stringify(data) });
-    showSuccess('Statistic updated successfully!');
+  const handleUpdateStat = async ( id: number, data: { label: string; value: string } ) =>
+  {
+    console.log( 'Updating stat:', id, data );
+    
+    const result = await updateHeaderStats( id, data )
+    console.log( result )
+        
+    if ( result.success )
+    {
+      showSuccess( 'Updating stat successfully!' );
+      toast.success( result.message )
+    }
+    else
+    {
+      toast.error( result.message )
+    }
   };
 
   const handleDeleteStat = async (id: number) => {
     console.log('Deleting stat:', id);
-    // API call: await fetch(`/api/homepage-stats/${id}`, { method: 'DELETE' });
-    showSuccess('Statistic deleted successfully!');
+    console.log( 'Deleting skill:', id );
+    
+    const result = await deleteHeaderStats( id )
+    console.log( result )
+        
+    if ( result.success )
+    {
+      showSuccess( 'stat deleted successfully!' );
+      toast.success( result.message )
+    }
+    else
+    {
+      toast.error( result.message )
+    }
   };
 
     return (
@@ -102,14 +192,14 @@ export default function ManageHomePage() {
 
                 <TabsContent value="homepage">
                     <HomePageForm
-                        defaultValues={defaultHomePage}
+                        defaultValues={defaultData}
                         onSubmit={handleHomePageSubmit}
                     />
                 </TabsContent>
 
                 <TabsContent value="skills">
                     <HeaderSkillsManager
-                        initialSkills={initialHeaderSkills}
+                        initialSkills={defaultData.headerSkills}
                         onCreate={handleCreateSkill}
                         onUpdate={handleUpdateSkill}
                         onDelete={handleDeleteSkill}
@@ -118,7 +208,7 @@ export default function ManageHomePage() {
 
                 <TabsContent value="stats">
                     <HomePageStatsManager
-                        initialStats={initialHomePageStats}
+                        initialStats={defaultData.stats}
                         onCreate={handleCreateStat}
                         onUpdate={handleUpdateStat}
                         onDelete={handleDeleteStat}

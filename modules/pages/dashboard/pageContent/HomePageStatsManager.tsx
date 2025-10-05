@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { headerStats, updateHeaderStats } from '@/lib/validations/form.validation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Edit, Plus, Save, X } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -28,40 +30,66 @@ export function HomePageStatsManager({
   onUpdate, 
   onDelete 
 }: HomePageStatsManagerProps) {
-  const [stats, setStats] = useState<HomePageStat[]>(initialStats);
+  const [pendingMap, setPendingMap] = useState<{ [key: string]: boolean }>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
-  const newForm = useForm({ defaultValues: { label: '', value: '' } });
-  const editForm = useForm({ defaultValues: { label: '', value: '' } });
+  console.log(initialStats)
+
+  const newForm = useForm( {
+    resolver: zodResolver(headerStats),
+    defaultValues: { label: '', value: '' }
+  } );
+
+  const editForm = useForm( {
+    resolver: zodResolver(updateHeaderStats),
+    defaultValues: { label: '', value: '' }
+  } );
+
+  const setPending = (key: string, value: boolean) => setPendingMap(prev => ({ ...prev, [key]: value }));
 
   const handleCreate = async (data: any) => {
-    await onCreate(data);
-    const newStat = { id: Date.now(), ...data, homePageId: 1 };
-    setStats([...stats, newStat]);
-    newForm.reset();
-    setIsAdding(false);
+    setPending('create', true);
+    try {
+      await onCreate(data);
+      newForm.reset();
+      setIsAdding(false);
+    } finally {
+      setPending('create', false);
+    }
   };
 
   const handleUpdate = async (data: any) => {
-    if (editingId) {
+    if (!editingId) return;
+    const key = `update-${editingId}`;
+    setPending(key, true);
+    try {
       await onUpdate(editingId, data);
-      setStats(stats.map(stat => 
-        stat.id === editingId ? { ...stat, ...data } : stat
-      ));
       setEditingId(null);
+    } finally {
+      setPending(key, false);
     }
   };
 
   const handleDelete = async (id: number) => {
-    await onDelete(id);
-    setStats(stats.filter(stat => stat.id !== id));
+    const key = `delete-${id}`;
+    setPending(key, true);
+    try {
+      await onDelete(id);
+    } finally {
+      setPending(key, false);
+    }
   };
 
-  const startEditing = (stat: HomePageStat) => {
-    setEditingId(stat.id);
-    editForm.reset({ label: stat.label, value: stat.value });
+  const startEditing = ( stat: HomePageStat ) =>
+  {
+    setEditingId( stat.id );
+    editForm.reset( {
+      label: stat.label,
+      value: stat.value
+    } );
   };
+
 
   return (
     <Card>
@@ -74,7 +102,7 @@ export function HomePageStatsManager({
             </CardDescription>
           </div>
           {!isAdding && (
-            <Button onClick={() => setIsAdding(true)}>
+            <Button onClick={() => setIsAdding( true )}>
               <Plus className="w-4 h-4 mr-2" />
               Add Stat
             </Button>
@@ -86,12 +114,12 @@ export function HomePageStatsManager({
           <Card className="border-2 border-dashed">
             <CardContent className="pt-6">
               <Form {...newForm}>
-                <form onSubmit={newForm.handleSubmit(handleCreate)} className="space-y-4">
+                <form onSubmit={newForm.handleSubmit( handleCreate )} className="space-y-4">
                   <FormField
                     control={newForm.control}
                     name="label"
                     rules={{ required: 'Label is required' }}
-                    render={({ field }) => (
+                    render={( { field } ) => (
                       <FormItem>
                         <FormLabel>Label</FormLabel>
                         <FormControl>
@@ -105,7 +133,7 @@ export function HomePageStatsManager({
                     control={newForm.control}
                     name="value"
                     rules={{ required: 'Value is required' }}
-                    render={({ field }) => (
+                    render={( { field } ) => (
                       <FormItem>
                         <FormLabel>Value</FormLabel>
                         <FormControl>
@@ -116,15 +144,16 @@ export function HomePageStatsManager({
                     )}
                   />
                   <div className="flex justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={() => {
-                      setIsAdding(false);
+                    <Button type="button" variant="outline" onClick={() =>
+                    {
+                      setIsAdding( false );
                       newForm.reset();
                     }}>
                       Cancel
                     </Button>
-                    <Button type="submit">
+                    <Button type="submit" disabled={pendingMap[ 'create' ]}>
                       <Save className="w-4 h-4 mr-2" />
-                      Save Stat
+                      {pendingMap[ 'create' ] ? 'Saving...' : 'Save'}
                     </Button>
                   </div>
                 </form>
@@ -139,79 +168,84 @@ export function HomePageStatsManager({
             <div>Value</div>
             <div className="text-right">Actions</div>
           </div>
-          {stats.map((stat) => (
-            <div key={stat.id} className="grid grid-cols-3 p-4 border-t items-center">
-              {editingId === stat.id ? (
-                <div className="col-span-3">
-                  <Form {...editForm}>
-                    <form onSubmit={editForm.handleSubmit(handleUpdate)} className="space-y-3">
-                      <FormField
-                        control={editForm.control}
-                        name="label"
-                        rules={{ required: 'Label is required' }}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input {...field} placeholder="Label" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={editForm.control}
-                        name="value"
-                        rules={{ required: 'Value is required' }}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input {...field} placeholder="Value" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setEditingId(null)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button type="submit" size="sm">
-                          <Save className="w-4 h-4 mr-2" />
-                          Update
-                        </Button>
-                      </div>
-                    </form>
-                  </Form>
-                </div>
-              ) : (
-                <>
-                  <div className="font-medium">{stat.label}</div>
-                  <div>{stat.value}</div>
-                  <div className="text-right space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => startEditing(stat)}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(stat.id)}
-                    >
-                      <X className="w-4 h-4 text-destructive" />
-                    </Button>
+          {initialStats.length > 0 && initialStats.map( ( stat ) =>
+          {
+            const isEditing = editingId === stat.id;
+            const updateKey = `update-${ stat.id }`;
+            const deleteKey = `delete-${ stat.id }`;
+
+            return (
+              <div key={stat.id} className="grid grid-cols-3 p-4 border-t items-center">
+                {editingId === stat.id ? (
+                  <div className="col-span-3">
+                    <Form {...editForm}>
+                      <form onSubmit={editForm.handleSubmit( handleUpdate )} className="space-y-3">
+                        <FormField
+                          control={editForm.control}
+                          name="label"
+                          rules={{ required: 'Label is required' }}
+                          render={( { field } ) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input {...field} placeholder="Label" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={editForm.control}
+                          name="value"
+                          rules={{ required: 'Value is required' }}
+                          render={( { field } ) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input {...field} placeholder="Value" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingId( null )}
+                          >
+                            Cancel
+                          </Button>
+                          <Button type="submit" size="sm" disabled={pendingMap[ updateKey ]}>
+                            {pendingMap[ updateKey ] ? 'Updating...' : 'Update'}
+                          </Button>
+                        </div>
+                      </form>
+                    </Form>
                   </div>
-                </>
-              )}
-            </div>
-          ))}
+                ) : (
+                  <>
+                    <div className="font-medium">{stat.label}</div>
+                    <div>{stat.value}</div>
+                    <div className="text-right space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => startEditing( stat )}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete( stat.id )} disabled={pendingMap[ deleteKey ]}>
+                        {pendingMap[ deleteKey ] ? <Save className="w-3 h-3 text-green-700 animate-spin" /> : <X className="w-3 h-3 text-destructive" />}
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )
+          } )}
+          {
+            initialStats.length === 0 && <p className='text-rose-700 p-3'>Please add some stats</p>
+          }
         </div>
       </CardContent>
     </Card>

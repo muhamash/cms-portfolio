@@ -5,7 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { HomePageTypes } from '@/lib/types/form.type';
 import { Save } from 'lucide-react';
+import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface HomePageFormProps {
@@ -21,11 +23,26 @@ interface HomePageFormProps {
 }
 
 export function HomePageForm({ defaultValues, onSubmit }: HomePageFormProps) {
-  const form = useForm({ defaultValues });
+  const form = useForm( { defaultValues } );
+  const [ isPending, startTransition ] = useTransition();
+
+  const handleSubmitForm = ( values: HomePageTypes ) =>
+  {
+    startTransition( async () =>
+    {
+      try
+      {
+        await onSubmit(values)
+      } catch ( error: any )
+      {
+        throw error
+      }
+    } )
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(handleSubmitForm)}>
         <Card>
           <CardHeader>
             <CardTitle>HomePage Information</CardTitle>
@@ -131,9 +148,11 @@ export function HomePageForm({ defaultValues, onSubmit }: HomePageFormProps) {
             />
 
             <div className="flex justify-end">
-              <Button type="submit">
+              <Button disabled={isPending} type="submit">
                 <Save className="w-4 h-4 mr-2" />
-                Save HomePage
+                {
+                  isPending ? "Saving.." : "Save"
+                }
               </Button>
             </div>
           </CardContent>

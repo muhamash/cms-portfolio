@@ -12,29 +12,6 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 
-const existingSkills = [
-  { id: 1, name: 'React' },
-  { id: 2, name: 'TypeScript' },
-  { id: 3, name: 'Node.js' }
-];
-
-const defaultExperiences: Experience[] = [
-    {
-        position: 'Senior Developer',
-        company: 'Tech Corp',
-        timeLine: '2020 - Present',
-        description: 'Leading development of web applications',
-    },
-];
-
-const defaultEducation: Education[] = [
-    {
-        degree: 'Computer Science',
-        institute: 'University of Technology',
-        timeLine: '2015 - 2019',
-        description: 'Bachelor of Science in Computer Science'
-    }
-];
 
 export default function ProfileManagerParent({defaultPersonalInfo}: any) {
 
