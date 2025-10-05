@@ -2,7 +2,7 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { createPersonalInfo, createSocialLink, deleteSocialLink, updatePersonalInfo, updateSocialLink } from '@/lib/utils/profile.utils';
+import { createEducation, createExperience, createPersonalInfo, createSkill, createSocialLink, deleteEducation, deleteExperience, deleteSkill, deleteSocialLink, updateEducation, updateExperience, updatePersonalInfo, updateSkill, updateSocialLink } from '@/lib/utils/profile.utils';
 import { Education, EducationManager } from '@/modules/pages/dashboard/profile/EducationForm';
 import { Experience, ExperienceManager } from '@/modules/pages/dashboard/profile/ExperienceForm';
 import { PersonalInfoForm } from '@/modules/pages/dashboard/profile/ManageProfile';
@@ -128,69 +128,152 @@ export default function ProfileManagerParent({defaultPersonalInfo}: any) {
     const onCreateSkill = async ( data ) =>
     {
         console.log( 'Creating skill:', data );
-        // API call: const response = await fetch('/api/skills', { method: 'POST', body: JSON.stringify(data) });
-    
-        showSuccess( 'Skill added successfully!' );
+        const result = await createSkill( data )
+        console.log(result)
+        
+        if ( result.success )
+        {
+            showSuccess( 'Skill added successfully!' );
+            toast.success(result.message)
+        }
+        else
+        {
+            toast.error( result.message )
+        }
     };
 
-    const onUpdateSkill = async ( data ) =>
+    const onUpdateSkill = async (id, data ) =>
     {
-        console.log( 'Updating skill:', data );
-        // API call: await fetch(`/api/skills/${editingSkill}`, { method: 'PUT', body: JSON.stringify(data) });
-    
-        showSuccess( 'Skill updated successfully!' );
+        console.log( 'updating skill:', data, id );
+        const result = await updateSkill( id, data )
+        // console.log(result)
+        
+        if ( result.success )
+        {
+            showSuccess( 'Skill updated successfully!' );
+            toast.success(result.message)
+        }
+        else
+        {
+            toast.error( result.message )
+        }
     };
 
     const onDeleteSkill = async ( id ) =>
     {
         console.log( 'Deleting skill:', id );
-        // API call: await fetch(`/api/skills/${id}`, { method: 'DELETE' });
-    
-        showSuccess( 'Skill deleted successfully!' );
+        const result = await deleteSkill( id )
+        // console.log(result)
+        
+        if ( result.success )
+        {
+            showSuccess( 'Skill deleted successfully!' );
+            toast.success( result.message )
+        }
+        else
+        {
+            toast.error( result.message )
+        }
     };
 
 
+    // experience
     const onCreateExperience = async ( data: Omit<Experience, "id"> ) =>
     {
         console.log( "Experience create:", data );
-        // API call: await fetch('/api/experiences', { method: 'POST', body: JSON.stringify(data) });
-        showSuccess( "Work experience created successfully!" );
+        const result = await createExperience( data )
+        
+        if ( !result.success )
+        {
+            toast.error(result.message)
+        }
+        else
+        {
+            showSuccess( 'Experience added successfully!' );
+            toast.success(result.message)
+        }
     };
 
     const onUpdateExperience = async ( id: number, data: Omit<Experience, "id"> ) =>
     {
         console.log( "Experience update:", id, data );
-        // API call: await fetch(`/api/experiences/${id}`, { method: 'PUT', body: JSON.stringify(data) });
-        showSuccess( "Work experience updated successfully!" );
+        const result = await updateExperience( id, data )
+        
+        if ( !result.success )
+        {
+            toast.error(result.message)
+        }
+        else
+        {
+            showSuccess( 'Experience updated successfully!' );
+            toast.success(result.message)
+        }
     };
 
     const onDeleteExperience = async ( id: number ) =>
     {
         console.log( "Experience delete:", id );
-        // API call: await fetch(`/api/experiences/${id}`, { method: 'DELETE' });
-        showSuccess( "Work experience deleted successfully!" );
+        const result = await deleteExperience( id )
+        
+        if ( !result.success )
+        {
+            toast.error(result.message)
+        }
+        else
+        {
+            showSuccess( 'Experience deleted successfully!' );
+            toast.success(result.message)
+        }
     };
 
 
+    // education
     const onCreateEducation = async ( data: Omit<Education, "id"> ) =>
     {
         console.log( "Education create:", data );
-        // API call: await fetch('/api/experiences', { method: 'POST', body: JSON.stringify(data) });
-        showSuccess( "Work Education created successfully!" );
+        const result = await createEducation( data )
+        
+        if ( !result.success )
+        {
+            toast.error(result.message)
+        }
+        else
+        {
+            showSuccess( ' education added successfully!' );
+            toast.success(result.message)
+        }
     };
 
     const onUpdateEducation = async ( id: number, data: Omit<Education, "id"> ) =>
     {
         console.log( "Education update:", id, data );
-        // API call: await fetch(`/api/experiences/${id}`, { method: 'PUT', body: JSON.stringify(data) });
-        showSuccess( "Work Education updated successfully!" );
+        const result = await updateEducation( id , data)
+        
+        if ( !result.success )
+        {
+            toast.error(result.message)
+        }
+        else
+        {
+            showSuccess( 'education updated successfully!' );
+            toast.success(result.message)
+        }
     };
 
     const onDeleteEducation = async ( id: number ) =>
     {
         console.log( "Education delete:", id );
-        // API call: await fetch(`/api/experiences/${id}`, { method: 'DELETE' });
-        showSuccess( "Work Education deleted successfully!" );
+        const result = await deleteEducation( id )
+        
+        if ( !result.success )
+        {
+            toast.error(result.message)
+        }
+        else
+        {
+            showSuccess( 'education deleted successfully!' );
+            toast.success(result.message)
+        }
     };
 
     return (
@@ -238,7 +321,7 @@ export default function ProfileManagerParent({defaultPersonalInfo}: any) {
 
                 <TabsContent value="experience">
                     <ExperienceManager
-                        initialExperiences={defaultExperiences}
+                        initialExperiences={defaultPersonalInfo.experiences}
                         onDelete={onDeleteExperience}
                         onCreate={onCreateExperience}
                         onUpdate={onUpdateExperience}
@@ -247,7 +330,7 @@ export default function ProfileManagerParent({defaultPersonalInfo}: any) {
 
                 <TabsContent value="education">
                     <EducationManager
-                        initialEducation={defaultEducation}
+                        initialEducation={defaultPersonalInfo.education}
                         onCreate={onCreateEducation}
                         onDelete={onDeleteEducation}
                         onUpdate={onUpdateEducation}

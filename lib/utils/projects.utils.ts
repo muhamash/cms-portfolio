@@ -2,6 +2,7 @@
 
 import { revalidateTag } from "next/cache";
 import { getAuthToken } from "../auth/auth.helper";
+import { SkillTypes } from "../types/form.type";
 
 export const getAllProjects = async ( page = "1", query = "" ) =>
 {
@@ -83,7 +84,6 @@ export const createProject = async ( values: any ) =>
     
   }
 };
-
 
 export const deleteProject = async ( id: number ) =>
 {

@@ -2,7 +2,7 @@
 
 import { revalidateTag } from "next/cache";
 import { getAuthToken } from "../auth/auth.helper";
-import { SocialLinkTypes } from "../types/form.type";
+import { CreateEducationInput, CreateExperienceInput, SkillTypes, SocialLinkTypes, UpdateEducationInput, UpdateExperienceInput } from "../types/form.type";
 import { IPersonalInfo } from "../types/util.type";
 
 export const getPersonalInfo = async () =>
@@ -273,6 +273,406 @@ export const deleteSocialLink = async ( id:number ) =>
     {
         console.error( error );
         return { success: false, message: error.message || "Failed to delete social links" }
+    
+    }
+};
+
+// skills
+export const createSkill = async ( values: SkillTypes ) =>
+{
+    try
+    {
+        const accessToken = await getAuthToken();
+    
+        if ( !accessToken )
+        {
+            return { success: false, message: "Not authenticated" };
+        }
+
+
+        const res = await fetch( `${ process.env.BACKEND_URL }/v1/pages/create-skill`, {
+            method: "POST",
+            body: JSON.stringify(values),
+            headers: {
+                "Content-Type": "application/json",
+                Cookie: `accessToken=${ accessToken }`,
+            },
+      
+            credentials: "include",
+        } );
+
+        revalidateTag( "INFO" )
+
+        const result = await res.json();
+        // console.log( result )
+
+        if ( result.statusCode !== 201 )
+        {
+      
+            return { success: false, message: result.message || result.error || "Failed to create a skill" }
+
+        }
+
+        return { success: true, message: result.message }
+    }
+    catch ( error: any )
+    {
+        console.error( error );
+        return { success: false, message: error.message || "Failed to create a skill" }
+    
+    }
+};
+
+export const updateSkill = async (id: number, values: SkillTypes ) =>
+{
+    try
+    {
+        const accessToken = await getAuthToken();
+
+        if ( !accessToken )
+        {
+            return { success: false, message: "Not authenticated" };
+        }
+
+        console.log(values)
+        const res = await fetch( `${ process.env.BACKEND_URL }/v1/pages/update-skill/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify(values),
+            headers: {
+                "Content-Type": "application/json",
+                Cookie: `accessToken=${ accessToken }`,
+            },
+      
+            credentials: "include",
+        } );
+
+        revalidateTag( "INFO" )
+
+        const result = await res.json();
+        // console.log( result )
+
+        if ( result.statusCode !== 200 )
+        {
+      
+            return { success: false, message: result.message || result.error || "Failed to update skill" }
+
+        }
+
+        return { success: true, message: result.message }
+    }
+    catch ( error: any )
+    {
+        console.error( error );
+        return { success: false, message: error.message || "Failed to update skill" }
+    
+    }
+};
+
+export const deleteSkill = async ( id:number ) =>
+{
+    try
+    {
+        const accessToken = await getAuthToken();
+
+        if ( !accessToken )
+        {
+            return { success: false, message: "Not authenticated" };
+        }
+
+        const res = await fetch( `${ process.env.BACKEND_URL }/v1/pages/delete-skill/${id}`, {
+            method: "DELETE",
+    
+            headers: {
+                Cookie: `accessToken=${ accessToken }`,
+            },
+      
+            credentials: "include",
+        } );
+
+        revalidateTag( "INFO" )
+
+        const result = await res.json();
+        // console.log( result )
+
+        if ( result.statusCode !== 200 )
+        {
+      
+            return { success: false, message: result.message || result.error || "Failed to delete skill" }
+
+        }
+
+        return { success: true, message: result.message }
+    }
+    catch ( error: any )
+    {
+        console.error( error );
+        return { success: false, message: error.message || "Failed to delete skill" }
+    
+    }
+};
+
+// experience
+export const createExperience = async ( values: CreateExperienceInput ) =>
+{
+    try
+    {
+        const accessToken = await getAuthToken();
+    
+        if ( !accessToken )
+        {
+            return { success: false, message: "Not authenticated" };
+        }
+
+        const res = await fetch( `${ process.env.BACKEND_URL }/v1/pages/create-experience`, {
+            method: "POST",
+            body: JSON.stringify(values),
+            headers: {
+                "Content-Type": "application/json",
+                Cookie: `accessToken=${ accessToken }`,
+            },
+      
+            credentials: "include",
+        } );
+
+        revalidateTag( "INFO" )
+
+        const result = await res.json();
+        // console.log( result )
+
+        if ( result.statusCode !== 201 )
+        {
+      
+            return { success: false, message: result.message || result.error || "Failed to create a experience" }
+
+        }
+
+        return { success: true, message: result.message }
+    }
+    catch ( error: any )
+    {
+        console.error( error );
+        return { success: false, message: error.message || "Failed to create a experience" }
+    
+    }
+};
+
+export const updateExperience = async (id: number, values: UpdateExperienceInput ) =>
+{
+    try
+    {
+        const accessToken = await getAuthToken();
+
+        if ( !accessToken )
+        {
+            return { success: false, message: "Not authenticated" };
+        }
+
+        console.log(values)
+        const res = await fetch( `${ process.env.BACKEND_URL }/v1/pages/update-experience/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify(values),
+            headers: {
+                "Content-Type": "application/json",
+                Cookie: `accessToken=${ accessToken }`,
+            },
+      
+            credentials: "include",
+        } );
+
+        revalidateTag( "INFO" )
+
+        const result = await res.json();
+        // console.log( result )
+
+        if ( result.statusCode !== 200 )
+        {
+      
+            return { success: false, message: result.message || result.error || "Failed to update experience" }
+
+        }
+
+        return { success: true, message: result.message }
+    }
+    catch ( error: any )
+    {
+        console.error( error );
+        return { success: false, message: error.message || "Failed to update experience" }
+    
+    }
+};
+
+export const deleteExperience = async ( id:number ) =>
+{
+    try
+    {
+        const accessToken = await getAuthToken();
+
+        if ( !accessToken )
+        {
+            return { success: false, message: "Not authenticated" };
+        }
+
+        const res = await fetch( `${ process.env.BACKEND_URL }/v1/pages/delete-experience/${id}`, {
+            method: "DELETE",
+    
+            headers: {
+                Cookie: `accessToken=${ accessToken }`,
+            },
+      
+            credentials: "include",
+        } );
+
+        revalidateTag( "INFO" )
+
+        const result = await res.json();
+        // console.log( result )
+
+        if ( result.statusCode !== 200 )
+        {
+      
+            return { success: false, message: result.message || result.error || "Failed to delete experience" }
+
+        }
+
+        return { success: true, message: result.message }
+    }
+    catch ( error: any )
+    {
+        console.error( error );
+        return { success: false, message: error.message || "Failed to delete experience" }
+    
+    }
+};
+
+// education
+export const createEducation = async ( values: CreateEducationInput ) =>
+{
+    try
+    {
+        const accessToken = await getAuthToken();
+    
+        if ( !accessToken )
+        {
+            return { success: false, message: "Not authenticated" };
+        }
+
+        const res = await fetch( `${ process.env.BACKEND_URL }/v1/pages/create-education`, {
+            method: "POST",
+            body: JSON.stringify(values),
+            headers: {
+                "Content-Type": "application/json",
+                Cookie: `accessToken=${ accessToken }`,
+            },
+      
+            credentials: "include",
+        } );
+
+        revalidateTag( "INFO" )
+
+        const result = await res.json();
+        // console.log( result )
+
+        if ( result.statusCode !== 201 )
+        {
+      
+            return { success: false, message: result.message || result.error || "Failed to create a education" }
+
+        }
+
+        return { success: true, message: result.message }
+    }
+    catch ( error: any )
+    {
+        console.error( error );
+        return { success: false, message: error.message || "Failed to create a education" }
+    
+    }
+};
+
+export const updateEducation = async (id: number, values: UpdateEducationInput ) =>
+{
+    try
+    {
+        const accessToken = await getAuthToken();
+
+        if ( !accessToken )
+        {
+            return { success: false, message: "Not authenticated" };
+        }
+
+        console.log(values)
+        const res = await fetch( `${ process.env.BACKEND_URL }/v1/pages/update-education/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify(values),
+            headers: {
+                "Content-Type": "application/json",
+                Cookie: `accessToken=${ accessToken }`,
+            },
+      
+            credentials: "include",
+        } );
+
+        revalidateTag( "INFO" )
+
+        const result = await res.json();
+        // console.log( result )
+
+        if ( result.statusCode !== 200 )
+        {
+      
+            return { success: false, message: result.message || result.error || "Failed to update education" }
+
+        }
+
+        return { success: true, message: result.message }
+    }
+    catch ( error: any )
+    {
+        console.error( error );
+        return { success: false, message: error.message || "Failed to update education" }
+    
+    }
+};
+
+export const deleteEducation = async ( id:number ) =>
+{
+    try
+    {
+        const accessToken = await getAuthToken();
+
+        if ( !accessToken )
+        {
+            return { success: false, message: "Not authenticated" };
+        }
+
+        const res = await fetch( `${ process.env.BACKEND_URL }/v1/pages/delete-education/${id}`, {
+            method: "DELETE",
+    
+            headers: {
+                Cookie: `accessToken=${ accessToken }`,
+            },
+      
+            credentials: "include",
+        } );
+
+        revalidateTag( "INFO" )
+
+        const result = await res.json();
+        // console.log( result )
+
+        if ( result.statusCode !== 200 )
+        {
+      
+            return { success: false, message: result.message || result.error || "Failed to delete education" }
+
+        }
+
+        return { success: true, message: result.message }
+    }
+    catch ( error: any )
+    {
+        console.error( error );
+        return { success: false, message: error.message || "Failed to delete education" }
     
     }
 };

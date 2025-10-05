@@ -6,7 +6,7 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || "refresh_token"
 export function generateTokens(user: any) {
   const payload = { id: user.id, email: user.email, name: user.name };
 
-  const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
+  const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "3m" });
   const refreshToken = jwt.sign(payload, REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
 
   return { accessToken, refreshToken, accessTokenExpires: Date.now() + 1 * 60 * 1000 };

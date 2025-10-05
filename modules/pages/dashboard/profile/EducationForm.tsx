@@ -2,24 +2,27 @@
 
 import { Button } from "@/components/ui/button";
 import
-    {
-        Card,
-        CardContent,
-        CardDescription,
-        CardHeader,
-        CardTitle,
-    } from "@/components/ui/card";
+  {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+  } from "@/components/ui/card";
 import
-    {
-        Form,
-        FormControl,
-        FormField,
-        FormItem,
-        FormLabel,
-        FormMessage,
-    } from "@/components/ui/form";
+  {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+  } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { createEducationSchema, updateEducationSchema } from "@/lib/validations/form.validation";
+import { DatePickerWithRange } from "@/modules/layouts/DatePickerWithRange";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit, Plus, Save, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -45,41 +48,53 @@ export function EducationManager({
   onUpdate,
   onDelete,
 }: EducationManagerProps) {
-  const [education, setEducation] = useState<Education[]>(initialEducation);
+  const [pendingMap, setPendingMap] = useState<{ [key: string]: boolean }>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
-  const newForm = useForm<Partial<Education>>({
+  const newForm = useForm<{ degree: string; institute: string; timeLine: string; description?: string; }>({
+    resolver: zodResolver(createEducationSchema),
     defaultValues: { degree: "", institute: "", timeLine: "", description: "" },
   });
 
   const editForm = useForm<Partial<Education>>({
+    resolver: zodResolver(updateEducationSchema),
     defaultValues: { degree: "", institute: "", timeLine: "", description: "" },
   });
 
-  const handleCreate = async (data: Omit<Education, "id">) => {
-    await onCreate(data);
-    const newEdu = { id: Date.now(), ...data };
-    setEducation([...education, newEdu]);
-    newForm.reset();
-    setIsAdding(false);
+  const setPending = (key: string, value: boolean) => setPendingMap(prev => ({ ...prev, [key]: value }));
+
+  const handleCreate = async (data: any) => {
+    setPending('create', true);
+    try {
+      await onCreate(data);
+      newForm.reset();
+      setIsAdding(false);
+    } finally {
+      setPending('create', false);
+    }
   };
 
-  const handleUpdate = async (data: Omit<Education, "id">) => {
-    if (editingId) {
+  const handleUpdate = async (data: any) => {
+    if (!editingId) return;
+    const key = `update-${editingId}`;
+    setPending(key, true);
+    try {
       await onUpdate(editingId, data);
-      setEducation(
-        education.map((edu) =>
-          edu.id === editingId ? { ...edu, ...data } : edu
-        )
-      );
       setEditingId(null);
+    } finally {
+      setPending(key, false);
     }
   };
 
   const handleDelete = async (id: number) => {
-    await onDelete(id);
-    setEducation(education.filter((edu) => edu.id !== id));
+    const key = `delete-${id}`;
+    setPending(key, true);
+    try {
+      await onDelete(id);
+    } finally {
+      setPending(key, false);
+    }
   };
 
   const startEditing = (edu: Education) => {
@@ -91,6 +106,60 @@ export function EducationManager({
       description: edu.description,
     });
   };
+
+  // Helper function to parse date string in YYYY-MM-DD format
+  const parseDateFromString = (dateStr: string) => {
+    if (!dateStr) return undefined;
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return undefined;
+    const [year, month, day] = parts.map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  // Helper function to format date to YYYY-MM-DD string
+  const formatDateToString = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const TimelineField = ({ control, name }: { control: any; name: string }) => (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => {
+        const [fromStr, toStr] = field.value?.split(" - ") || [];
+        const currentRange = fromStr
+          ? {
+              from: parseDateFromString(fromStr),
+              to: toStr ? parseDateFromString(toStr) : undefined,
+            }
+          : undefined;
+
+        return (
+          <FormItem>
+            <FormLabel>Timeline</FormLabel>
+            <FormControl>
+              <DatePickerWithRange
+                value={currentRange}
+                onChange={(range) => {
+                  if (range?.from && range?.to) {
+                    field.onChange(`${formatDateToString(range.from)} - ${formatDateToString(range.to)}`);
+                  } else if (range?.from) {
+                    field.onChange(`${formatDateToString(range.from)}`);
+                  } else {
+                    field.onChange("");
+                  }
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
+    />
+  );
 
   return (
     <Card>
@@ -149,20 +218,7 @@ export function EducationManager({
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={newForm.control}
-                    name="timeLine"
-                    rules={{ required: "Timeline is required" }}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Timeline</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="e.g., 2015 - 2019" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <TimelineField control={newForm.control} name="timeLine" />
                   <FormField
                     control={newForm.control}
                     name="description"
@@ -191,9 +247,9 @@ export function EducationManager({
                     >
                       Cancel
                     </Button>
-                    <Button type="submit">
+                    <Button type="submit" disabled={pendingMap['create']}>
                       <Save className="w-4 h-4 mr-2" />
-                      Save Education
+                      {pendingMap['create'] ? 'Saving...' : 'Save Education'}
                     </Button>
                   </div>
                 </form>
@@ -204,116 +260,119 @@ export function EducationManager({
 
         {/* List education */}
         <div className="grid grid-cols-1 gap-3">
-          {education.map((edu) => (
-            <Card key={edu.id}>
-              <CardContent className="pt-6">
-                {editingId === edu.id ? (
-                  <Form {...editForm}>
-                    <form
-                      onSubmit={editForm.handleSubmit(handleUpdate)}
-                      className="space-y-4"
-                    >
-                      <FormField
-                        control={editForm.control}
-                        name="degree"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Degree</FormLabel>
-                            <FormControl>
-                              <Input {...field} placeholder="Degree" />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={editForm.control}
-                        name="institute"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Institute</FormLabel>
-                            <FormControl>
-                              <Input {...field} placeholder="Institute" />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={editForm.control}
-                        name="timeLine"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Timeline</FormLabel>
-                            <FormControl>
-                              <Input {...field} placeholder="e.g., 2015 - 2019" />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={editForm.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Textarea {...field} rows={3} placeholder="Details..." />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setEditingId(null)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button type="submit" size="sm">
-                          Update
-                        </Button>
+          {initialEducation?.length > 0 && initialEducation?.map((edu) => {
+            const updateKey = `update-${edu.id}`;
+            const deleteKey = `delete-${edu.id}`;
+
+            return (
+              <Card key={edu.id}>
+                <CardContent className="pt-6">
+                  {editingId === edu.id ? (
+                    <Form {...editForm}>
+                      <form
+                        onSubmit={editForm.handleSubmit(handleUpdate)}
+                        className="space-y-4"
+                      >
+                        <FormField
+                          control={editForm.control}
+                          name="degree"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Degree</FormLabel>
+                              <FormControl>
+                                <Input {...field} placeholder="Degree" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={editForm.control}
+                          name="institute"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Institute</FormLabel>
+                              <FormControl>
+                                <Input {...field} placeholder="Institute" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <TimelineField control={editForm.control} name="timeLine" />
+                        <FormField
+                          control={editForm.control}
+                          name="description"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Description</FormLabel>
+                              <FormControl>
+                                <Textarea {...field} rows={3} placeholder="Details..." />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingId(null)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button type="submit" size="sm" disabled={pendingMap[updateKey]}>
+                            {pendingMap[updateKey] ? 'Updating...' : 'Update'}
+                          </Button>
+                        </div>
+                      </form>
+                    </Form>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="font-medium">
+                            {edu.degree} at {edu.institute}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {edu.timeLine}
+                          </p>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => startEditing(edu)}
+                          >
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                          <Button 
+                            type="button" 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8" 
+                            onClick={() => handleDelete(edu.id)} 
+                            disabled={pendingMap[deleteKey]}
+                          >
+                            {pendingMap[deleteKey] ? (
+                              <Save className="w-3 h-3 text-green-700 animate-spin" />
+                            ) : (
+                              <X className="w-3 h-3 text-destructive" />
+                            )}
+                          </Button>
+                        </div>
                       </div>
-                    </form>
-                  </Form>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-medium">
-                          {edu.degree} at {edu.institute}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {edu.timeLine}
-                        </p>
-                      </div>
-                      <div className="flex gap-1">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => startEditing(edu)}
-                        >
-                          <Edit className="w-3 h-3" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleDelete(edu.id)}
-                        >
-                          <X className="w-3 h-3 text-destructive" />
-                        </Button>
-                      </div>
+                      <p className="text-sm">{edu.description}</p>
                     </div>
-                    <p className="text-sm">{edu.description}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+
+          {initialEducation?.length === 0 && (
+            <p className="text-red-700">Please add education</p>
+          )}
         </div>
       </CardContent>
     </Card>

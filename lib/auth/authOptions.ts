@@ -59,7 +59,7 @@ export const authOptions: NextAuthOptions = {
     ],
 
     session: { strategy: "jwt" },
-    secret: process.env.AUTH_SECRET, 
+    secret: process.env.AUTH_SECRET,
     jwt: { maxAge: 60 },
 
     callbacks: {
@@ -75,7 +75,7 @@ export const authOptions: NextAuthOptions = {
                     accessToken,
                     refreshToken,
                     accessTokenExpires,
-                    rotated: true, 
+                    rotated: true,
                 };
             }
 
@@ -86,6 +86,13 @@ export const authOptions: NextAuthOptions = {
             }
 
             // Access token expired --> rotate using refresh token
+            const ROTATION_BUFFER = 45 * 1000;
+            
+            if ( Date.now() < ( token.accessTokenExpires as number ) - ROTATION_BUFFER )
+            {
+                return { ...token, rotated: false };
+            }
+
             const decoded = verifyRefreshToken( token.refreshToken as string );
 
             if ( !decoded )
@@ -102,7 +109,7 @@ export const authOptions: NextAuthOptions = {
                 accessToken,
                 refreshToken,
                 accessTokenExpires,
-                rotated: true, 
+                rotated: true,
             };
         },
 
@@ -115,7 +122,7 @@ export const authOptions: NextAuthOptions = {
                 session.user = { id: token.id, email: token.email, name: token.name };
                 session.accessToken = token.accessToken as string;
                 session.refreshToken = token.refreshToken as string;
-                ( session as any ).rotated = token.rotated; 
+                ( session as any ).rotated = token.rotated;
             }
 
             console.log( " Session issued:", {

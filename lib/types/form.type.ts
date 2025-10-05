@@ -1,5 +1,5 @@
 import z from "zod";
-import { createEducationSchema, createExperienceSchema, headerSchema, headerSkillSchema, headerStats, personalInfoSchema, skillSchema, socialLinkSchema, updateEducationSchema, updateExperienceSchema, updateHeaderSchema, updateHeaderStats, updatePersonalInfo, updateSkillSchema, updateSocialSchema } from "../validations/form.validation";
+import { createEducationSchema, createExperienceSchema, headerSchema, headerSkillSchema, headerStats, personalInfoSchema, skillSchema, socialLinkSchema, updateEducationSchema, updateExperienceSchema, updateHeaderSchema, updateHeaderStats, updatePersonalInfo, updateSocialSchema } from "../validations/form.validation";
 
 
 export type PersonalInfoInput = z.infer<typeof personalInfoSchema>;
@@ -9,7 +9,6 @@ export type SocialLinkTypes = z.infer<typeof socialLinkSchema>;
 export type UpdateSocialLinkTypes = z.infer<typeof updateSocialSchema>;
 
 export type SkillTypes = z.infer<typeof skillSchema>;
-export type UpdateSkillTypes = z.infer<typeof updateSkillSchema>;
 
 export type HomePageTypes = z.infer<typeof headerSchema>;
 export type UpdateHomePageTypes = z.infer<typeof updateHeaderSchema>;
