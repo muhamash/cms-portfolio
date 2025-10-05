@@ -27,13 +27,13 @@ export default function ProjectCard ( { id, title, description, slug, tags, imag
 {
     return (
         <motion.div
-            className='cursor-pointer'
+            className='cursor-pointer w-full'
             key={id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: id * 0.1 }}
         >
-            <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden h-full">
+            <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden h-full w-full">
                 <div className="relative overflow-hidden">
                     <img
                         src={image}
@@ -59,7 +59,7 @@ export default function ProjectCard ( { id, title, description, slug, tags, imag
                     </div>
                     
                     <div
-                        className="text-muted-foreground mb-4 line-clamp-3"
+                        className="text-muted-foreground mb-4 line-clamp-3 max-w-full break-word"
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize( description ) }}
                     />
                     

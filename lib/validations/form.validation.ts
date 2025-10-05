@@ -61,6 +61,19 @@ export const updatePersonalInfo = personalInfoSchema.partial().refine( ( data ) 
   message: "At least one field is required to update",
 } );
 
+export enum SocialPlatform {
+  FACEBOOK = "Facebook",
+  TWITTER = "Twitter",
+  LINKEDIN = "LinkedIn",
+  INSTAGRAM = "Instagram",
+  GITHUB = "GitHub",
+  YOUTUBE = "YouTube",
+  TIKTOK = "TikTok",
+  SNAPCHAT = "Snapchat",
+
+}
+
+
 export const socialLinkSchema = z.object( {
   platform: z
     .string()

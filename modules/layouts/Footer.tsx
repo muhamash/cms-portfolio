@@ -1,6 +1,8 @@
 import Link from "next/link";
 
-export default async function Footer() {
+export default async function Footer ( { name, socialLinks, email }: any )
+{
+  // console.log(name, socialLinks, email)
   return (
     <footer className=" text-gray-900 bg-gradient-to-br from-sky-100 via-slate-50 to-purple-100 border-t-1 border-purple-800 py-12">
       <div className="container mx-auto px-6 md:px-12">
@@ -8,7 +10,7 @@ export default async function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <h2 className="text-2xl font-bold text-violet-800 mb-3">Md Ashraful Alam</h2>
+            <h2 className="text-2xl font-bold text-violet-800 mb-3">{name}</h2>
             <p className="text-sm text-gray-600 leading-relaxed">
               Building modern web experiences with Next.js, Tailwind, and scalable tech.
             </p>
@@ -25,12 +27,22 @@ export default async function Footer() {
             </ul>
           </div>
 
-          {/* Resources */}
+          {/* social links */}
           <div>
             <h3 className="text-lg font-semibold text-slate-600 mb-4">Resources</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="https://github.com/muhamash" target="_blank" rel="noreferrer" className="hover:text-white transition">GitHub</a></li>
-              <li><a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:text-white transition">LinkedIn</a></li>
+              {socialLinks.map( ( link ) => (
+                <li key={link.id}>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    {link.platform}
+                  </a>
+                </li>
+              ) )}
             </ul>
           </div>
 
@@ -38,7 +50,7 @@ export default async function Footer() {
           <div>
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Hire me!</h3>
             <p className="text-sm text-gray-600 mb-3">Connect me to get projects with the latest tech and amazing features.</p>
-            
+            <p className="text-teal-700 font-mono">Email: {email}</p>
           </div>
         </div>
 

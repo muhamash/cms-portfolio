@@ -1,4 +1,5 @@
 import { getAllBlogs } from "@/lib/utils/blogs.util";
+import { getHomePageData } from "@/lib/utils/page.utils";
 import { getAllProjects } from "@/lib/utils/projects.utils";
 import BlogSection from "@/modules/pages/home/BlogSection";
 import ContactSection from "@/modules/pages/home/ContactSection";
@@ -12,7 +13,8 @@ export default async function Home ()
 
   const allProjects = await getAllProjects();
   const allBlogs = await getAllBlogs();
-  // console.log(allProjects)
+  const homePage = await getHomePageData()
+  console.log(homePage)
 
   return (
     <div className="py-30 grow-1 px-6 md:px-12 container mx-auto">

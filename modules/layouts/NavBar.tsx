@@ -20,7 +20,7 @@ const navItems = [
   
 ]
 
-export default function Navbar() {
+export default function Navbar({name}: any) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -58,10 +58,10 @@ export default function Navbar() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
-              MD
+              {name.slice(0,2)}
             </motion.div>
             <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Ashraful
+              {name}
             </span>
           </Link>
 

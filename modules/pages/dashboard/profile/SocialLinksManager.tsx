@@ -101,17 +101,17 @@ export function SocialLinksManager({ initialLinks, onCreate, onUpdate, onDelete 
             <CardContent className="pt-6">
               <Form {...newForm}>
                 <form onSubmit={newForm.handleSubmit(handleCreate)} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-wrap w-full justify-between gap-4">
                     <FormField
                       control={newForm.control}
                       name="platform"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="max-w-[250px] w-fit">
                           <FormLabel>Platform</FormLabel>
                           <FormControl>
                             <Input {...field} placeholder="e.g., LinkedIn, GitHub" />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className='text-[12px]'/>
                         </FormItem>
                       )}
                     />

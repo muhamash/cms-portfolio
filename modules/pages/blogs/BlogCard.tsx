@@ -60,7 +60,7 @@ export default function BlogCard ( { id, slug, title, content, image, tags, crea
                     </h3>
                   
                     <div
-                        className="text-muted-foreground mb-4 line-clamp-3"
+                        className="text-muted-foreground mb-4 line-clamp-3 max-w-full break-word"
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize( content ) }}
                     />
 
