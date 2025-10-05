@@ -68,7 +68,7 @@ export default function ProjectDetails({ project }: { project: ProjectCardProps 
         </div>
 
         {/* Links */}
-        <div className="flex gap-3 mt-4">
+        <div className="flex flex-wrap gap-3 mt-4">
           <Button
           variant="ghost"
           onClick={() => router.back()}
@@ -111,7 +111,7 @@ export default function ProjectDetails({ project }: { project: ProjectCardProps 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="prose prose-slate max-w-none"
+        className="prose prose-slate w-full max-w-3xl break-words"
         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.description) }}
       />
 

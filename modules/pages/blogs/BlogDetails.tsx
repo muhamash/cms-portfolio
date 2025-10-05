@@ -87,7 +87,7 @@ export default function BlogDetails({ blog }: { blog: BlogCardProps }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="prose prose-slate max-w-none prose-img:rounded-xl prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline"
+          className="prose prose-slate  prose-img:rounded-xl prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose prose-slate w-full max-w-3xl break-words"
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize( blog.content ) }}
         />
 
